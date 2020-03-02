@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>RCServer</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
+	<link rel="stylesheet" type="text/css" href="../static/index.css">
+</head>
+
+<body style="background-color:#111710">
+    <header>
+      <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+          <a href="#" class="navbar-brand d-flex align-items-center">
+            <strong>RCServer</strong>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main role="main">
+        <div class="grid">
+        {% if events %}
+            {% for e in events %}
+                <div class="event rounded text-center" onclick="submit_event('{{e.event}}')">
+                    {% if e.has_icon_path() %}
+                    <img src="{{e.icon_path}}" class="event-icon"></img>
+                    {% else %}
+                    <ul>
+                        <li>{{e.event}}</li>
+                        {% if e.has_exec_cmd() %}
+                            <li>{{e.exec_cmd}}</li>
+                        {% endif %}
+                        {% if e.has_exec_hotkey() %}
+                            <li>{{e.exec_hotkey}}</li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class='jumbotron'>No events</div>
+        {% endif %}
+        </div>
+    </main>
+
+    <script>
+        function submit_event(key) {
+            fetch('./event?key=' + key)
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            if (! data.press){
+                alert("Error in processing button");
+            }
+            // console.log(data);
+          });
+        }
+      </script>
+</body>
+</html>
