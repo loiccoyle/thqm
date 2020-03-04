@@ -52,7 +52,6 @@ def start_server(config_path=None, port_number=8800, print_qr=True):
             shutdown_server()
 
         try:
-            print(key)
             events[key].run_exec_cmd()
             events[key].run_exec_hotkey()
             sleep(0.3)
