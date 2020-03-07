@@ -3,13 +3,13 @@ from setuptools import setup
 with open('requirements.txt') as fobj:
     REQUIREMENTS = [l.strip() for l in fobj.readlines()]
 
-setup(name='rc_server',
+setup(name='thqm',
       author='Loic Coyle',
       author_email='loic.coyle@hotmail.fr',
-      packages=['rc_server'],
+      packages=['thqm'],
       entry_points={
           'console_scripts': [
-              'rcserver = rc_server.__main__:main'
+              'thqm = thqm.__main__:main'
           ]
       },
       install_requires=REQUIREMENTS,
