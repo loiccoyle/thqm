@@ -8,7 +8,7 @@ from .server import start_server
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--config',
-                        default=Path(os.environ.get("XDG_CONFIG_HOME")) / 'rc_server' / 'config',
+                        default=Path(os.environ.get("XDG_CONFIG_HOME")) / 'thqm' / 'config',
                         help="Path to config file.")
     parser.add_argument("-p", "--port", type=int, default=8800,
                         help="Port number.")
