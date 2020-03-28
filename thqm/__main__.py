@@ -25,7 +25,7 @@ def main():
                         default=False,
                         help='Show the qrcode.')
     parser.add_argument("-v", "--verbose", action='count', default=1,
-                        help="Verbosity or the server. -v shows the print the keypresses. -vv show the server output.")
+                        help="Verbosity of the server. -v shows the events. -vv shows the server output.")
     args = parser.parse_args()
 
     if not Path(args.config).is_file():
