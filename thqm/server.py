@@ -1,6 +1,8 @@
 import sys
+import click
 import socket
 import pyqrcode
+import logging
 
 from pathlib import Path
 from time import sleep
@@ -14,7 +16,17 @@ def shutdown_server():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
-def start_server(config_path=None, port_number=8800, print_qr=True):
+def start_server(config_path=None, port_number=8800, verbosity=2, qrcode=False):
+    if verbosity < 2:
+        # disable all console output
+        log = logging.getLogger('werkzeug')
+        log.disabled = True
+        # flask uses click.echo & click.secho
+        def dummy(*args, **kwargs):
+            pass
+        click.echo = dummy
+        click.secho = dummy
+
     # get the ip address
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))  # this sees if device is connected to internet
@@ -29,7 +41,7 @@ def start_server(config_path=None, port_number=8800, print_qr=True):
     qr_path = Path(__file__).parent / 'static' / 'qr_code.svg'
     qr = pyqrcode.create(f'http://{ip}:{port_number}')
     qr.svg(qr_path, module_color="#000000", background='#ffffff')
-    if print_qr:
+    if qrcode:
         print(qr.terminal())
 
     events = Parser(config_path).parse()
@@ -45,6 +57,8 @@ def start_server(config_path=None, port_number=8800, print_qr=True):
     def do_event():
         # query is key and the default value is None
         key = request.args.get("key", "None")
+        if verbosity:
+            print(key, flush=True)
 
         # presses key as it receives via GET
         success = True

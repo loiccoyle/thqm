@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>thqm</title>
+	<link rel="shortcut icon" type="image/png" href="../static/favicon.png" sizes='32x32'/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="../static/index.css">
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -13,7 +14,7 @@
     <body class='bg-dark'>
         <header>
             <div class="navbar navbar-dark bg-dark box-shadow">
-                <a href="#" class="navbar-brand">RCServer</a>
+                <a href="#" class="navbar-brand">thqm</a>
 
                 <div class="my-2 my-sm-0 rounded">
                     <button type='button' class='btn btn-secondary btn-lg' title='Show QR code' data-toggle='modal' data-target='#qrcode'>
@@ -37,7 +38,8 @@
           </div>
         </div>
 
-        <main role="main">
+	<!-- Card grid-->
+        <div role="container">
             {% if events %}
             <div class="grid">
                 {% for e in events %}
@@ -72,10 +74,10 @@
             {% else %}
             <div class="alert alert-primary">
                 <h1 class="h4">No events configured!</h1>
-                <p class="lead">Please edit the configuration file to add command and hotkeys shortcuts.</p>
+                <p class="lead">Please edit the configuration file to add commands and hotkeys.</p>
             </div>
             {% endif %}
-        </main>
+        </div>
 
         <script>
             function submit_event(key) {
@@ -85,7 +87,7 @@
                     })
                     .then((data) => {
                         if (! data.press){
-                            alert("Error in processing button");
+                            console.log("Error in processing button");
                         }
                         // console.log(data);
                     });
