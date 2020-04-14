@@ -24,14 +24,14 @@ def main():
     parser.add_argument('-q', '--qrcode', action='store_true',
                         default=False,
                         help='Show the qrcode.')
-    parser.add_argument("-v", "--verbose", action='count', default=1,
-                        help="Verbosity of the server. -v shows the events. -vv shows the server output.")
+    parser.add_argument("-v", "--verbosity", action='count', default=1,
+                        help="Verbosity of the waitress server.")
     args = parser.parse_args()
 
     if not Path(args.config).is_file():
         raise ValueError(f'File {args.config} does not exists.')
 
-    start_server(args.config, port_number=args.port, qrcode=args.qrcode, verbosity=args.verbose)
+    start_server(args.config, port_number=args.port, qrcode=args.qrcode, verbosity=args.verbosity)
 
 if __name__ == '__main__':
     main()
