@@ -1,4 +1,5 @@
 import os
+import platform
 from pathlib import Path
 
 HOME = os.getenv('HOME', os.getenv('USERPROFILE'))
@@ -34,4 +35,6 @@ CONF_FILE_HEADER = '''\
 # exec_hotkey=Right
 
 '''
+
+PLATFORM = platform.uname()[0]
 
