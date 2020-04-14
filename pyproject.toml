@@ -9,6 +9,7 @@ license = "MIT"
 python = "^3.6"
 flask = "^1.1.1"
 pyqrcode = "^1.2.1"
+waitress = "^1.4.3"
 
 [tool.poetry.dev-dependencies]
 
