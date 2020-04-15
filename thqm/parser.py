@@ -11,7 +11,11 @@ class Parser:
         cf = ConfigParser()
         cf.read(self.config_path)
         events = {}
+        auth = {'password': None}
         for section in cf.sections():
-            events[section] = Event(section, **cf._sections[section])
-        return events
+            if section == 'thqm-auth':
+                auth = cf._sections[section]
+            else:
+                events[section] = Event(section, **cf._sections[section])
+        return events, auth
 

@@ -1,3 +1,4 @@
+import os
 import sys
 import click
 import socket
@@ -6,10 +7,11 @@ import logging
 
 from pathlib import Path
 from time import sleep
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, session
 from waitress import serve
 
 from .parser import Parser
+from .auth import Auth
 
 def shutdown_server():
     func = request.environ.get('werkzeug.server.shutdown')
@@ -29,19 +31,36 @@ def start_server(config_path=None, port_number=8800, verbosity=2, qrcode=False):
 
     config_path = Path(config_path)
 
+
+    events, auth_section = Parser(config_path).parse()
+    auth = Auth(password=auth_section['password'])
+
     qr_path = Path(__file__).parent / 'static' / 'qr_code.svg'
-    qr = pyqrcode.create(f'http://{ip}:{port_number}')
+    if auth.require_login:
+        qr_url = f'http://{ip}:{port_number}/login?password={auth.password_b64}'
+    else:
+        qr_url = f'http://{ip}:{port_number}'
+    qr = pyqrcode.create(qr_url)
     qr.svg(qr_path, module_color="#000000", background='#ffffff')
     if qrcode:
         print(qr.terminal())
 
-    events = Parser(config_path).parse()
-
     thqm = Flask(__name__.split('.')[0])
+    thqm.secret_key = os.urandom(12)
 
     @thqm.route("/")
     def index():
-        return render_template("index.html", events=events.values())
+        return render_template("index.html",
+                               events=events.values(),
+                               require_login=auth.require_login)
+
+    @thqm.route("/login")
+    def login():
+        password = request.args.get("password", None)
+        if password is not None:
+            if auth.try_login(password):
+                session['logged_in'] = True
+        return redirect(url_for('index'))
 
 
     @thqm.route("/event")
