@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "thqm"
-version = "0.1.0"
-description = "thqm, server providing simple remote hotkey and command execution on host."
+version = "1.0.0"
+description = "thqm, WSGI server providing simple remote hotkey and command execution on host."
 authors = ["Loic Coyle <loic.coyle@hotmail.fr>"]
 license = "MIT"
 classifiers = [

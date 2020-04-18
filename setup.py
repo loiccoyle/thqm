@@ -3,7 +3,7 @@ from setuptools import setup
 with open('requirements.txt') as fobj:
     REQUIREMENTS = [l.strip() for l in fobj.readlines()]
 
-DESCRIPTION = "thqm, server providing basic remote hotkey and command execution on host."
+DESCRIPTION = "thqm, WSGI server providing basic remote hotkey and command execution on host."
 
 try:
     with open("README.md") as fh:
@@ -24,6 +24,4 @@ setup(name='thqm',
       },
       install_requires=REQUIREMENTS,
       python_requires='>=3.6',
-      setup_requires=['setuptools_scm'],
-      use_scm_version=True,
       )
