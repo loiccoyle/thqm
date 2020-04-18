@@ -1,6 +1,10 @@
 # thqm
+> Control your desktop from your phone
 
-> WSGI server providing simple remote hotkey and command execution on host
+<p align="center">
+<img src="https://raw.githubusercontent.com/loiccoyle/thqm/master/images/logo.svg" width="200" type="image/svg" /> 
+<img src="https://raw.githubusercontent.com/loiccoyle/thqm/master/images/thqm_phone_portrait.png?token=AH5E4N6RSHKLOCCT7NJXHFK6TMZ7S" width="200" />
+</p>
 
 `thqm` (pronounced tahakoom from the arabic تحكم  meaning control).
 
