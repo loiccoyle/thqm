@@ -26,9 +26,6 @@ def start_server(config_path=None, port_number=8800, verbosity=2, qrcode=False):
     ip = s.getsockname()[0]
     s.close()
 
-    if port_number is None:
-        port_number = randint(49152, 65535)
-
     config_path = Path(config_path)
 
 
@@ -77,6 +74,7 @@ def start_server(config_path=None, port_number=8800, verbosity=2, qrcode=False):
 
         try:
             events[key].run_exec_cmd()
+            sleep(0.1)
             events[key].run_exec_hotkey()
             sleep(0.3)
         except Exception as e:

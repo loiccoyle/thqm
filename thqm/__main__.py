@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 from .server import start_server
-from .settings import CONF_DIR, CONF_FILE, CONF_FILE_HEADER
+from .settings import CONF_DIR, CONF_FILE, CONF_FILE_DEFAULT
 
 
 def main():
@@ -13,9 +13,11 @@ def main():
     CONF_DIR.mkdir(exist_ok=True)
     if not CONF_FILE.is_file():
         with open(CONF_FILE, 'w') as fp:
-            fp.write(CONF_FILE_HEADER)
+            fp.write(CONF_FILE_DEFAULT)
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog='thqm',
+                                     description='Remote command and hotkey execution server.',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-c', '--config',
                         default=CONF_FILE,
                         help="Path to config file.")
@@ -24,8 +26,10 @@ def main():
     parser.add_argument('-q', '--qrcode', action='store_true',
                         default=False,
                         help='Show the qrcode.')
-    parser.add_argument("-v", "--verbosity", action='count', default=1,
-                        help="Verbosity of the waitress server.")
+    parser.add_argument("-v", "--verbosity", action='count', default=0,
+                        help=("Verbosity of the waitress server. "
+                              "-v will print events. "
+                              "-vv will print server messages."))
     args = parser.parse_args()
 
     if not Path(args.config).is_file():

@@ -4,6 +4,19 @@ version = "0.1.0"
 description = "thqm, server providing simple remote hotkey and command execution on host."
 authors = ["Loic Coyle <loic.coyle@hotmail.fr>"]
 license = "MIT"
+classifiers = [
+    "Framework :: Flask",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Server",
+    "Topic :: Utilities",
+    "Topic :: Home Automation",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Programming Language :: Python",
+]
+repository = "https://github.com/loiccoyle/thqm"
+readme = "README.md"
+keywords = ["remote", "control", "HTTP-server", "flask", "thqm"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -12,6 +25,9 @@ pyqrcode = "^1.2.1"
 waitress = "^1.4.3"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+thqm = 'thqm.__main__:main'
 
 [build-system]
 requires = ["poetry>=0.12"]
