@@ -1,6 +1,7 @@
 # thqm
 > Control your desktop from your phone
 
+ [![pypi](https://img.shields.io/pypi/v/thqm)](https://pypi.org/project/thqm/)
 
 <p align="center">
  <img src="./images/logo.svg" width="200">
