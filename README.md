@@ -1,9 +1,9 @@
 # thqm
 > Control your desktop from your phone
 
+
 <p align="center">
-<img src="https://raw.githubusercontent.com/loiccoyle/thqm/master/images/logo.svg" width="200" type="image/svg" /> 
-<img src="https://raw.githubusercontent.com/loiccoyle/thqm/master/images/thqm_phone_portrait.png?token=AH5E4N6RSHKLOCCT7NJXHFK6TMZ7S" width="200" />
+ <img src="./images/logo.svg" width="200">
 </p>
 
 `thqm` (pronounced tahakoom from the arabic تحكم  meaning control).
@@ -58,6 +58,9 @@ optional arguments:
 ```
 
 The `-q` flag will print a qr-code in the terminal, this qr-code will bypass the `thqm-auth` authentication, the same is true for the in browser qr-code, this makes it particularly easy to share access with others.
+<p align="center">
+ <img src="./images/thqm_phone_portrait.png" width="200" />
+</p>
 
 # Configuration
 
