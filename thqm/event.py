@@ -46,8 +46,3 @@ class Event:
         args = shlex.split(self.exec_hotkey)
         return ['xdotool', 'key'] + args
 
-
-
-
-
-
