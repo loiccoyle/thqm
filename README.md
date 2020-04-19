@@ -65,7 +65,7 @@ The `-q` flag will print a qr-code in the terminal, this qr-code will bypass the
 
 # Configuration
 
-`thqm` reads a configuration file located at `$XDG_CONFIG_HOME/thqm/config` (or `$HOME/.config/thqm/config` if `$XDG_CONFIG_HOME` if not defined). This `ini` format file contains the pre-configured commands & hotkeys.
+`thqm` reads a configuration file located at `$XDG_CONFIG_HOME/thqm/config` (or `$HOME/.config/thqm/config` if `$XDG_CONFIG_HOME` is not defined). This `ini` format file contains the pre-configured commands & hotkeys.
 
 Each `ini` block can have the following structure:
 ```ini
