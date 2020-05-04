@@ -1,10 +1,10 @@
-# thqm
-> Control your desktop from your phone
+<h1 align="center">thqm</h1>
 
- [![pypi](https://img.shields.io/pypi/v/thqm)](https://pypi.org/project/thqm/)
-
+<h3 align="center"><img src="./images/logo.svg" width="200"></h3>
+<h5 align="center">Control your desktop from your phone.</h5>
 <p align="center">
- <img src="./images/logo.svg" width="200">
+  <a href="https://pypi.org/project/thqm/"><img src="https://img.shields.io/pypi/v/thqm"></a>
+  <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
 `thqm` (pronounced tahakoom from the arabic تحكم  meaning control).
