@@ -7,7 +7,6 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="../static/index.css">
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://kit.fontawesome.com/0f95db5029.js" crossorigin="anonymous"></script>
         <title>thqm</title>
@@ -17,20 +16,20 @@
         <header>
             <div class="navbar navbar-dark bg-dark box-shadow">
                 <a href="#" class="navbar-brand">thqm</a>
-                {% if not require_login or session.get('logged_in', False) %}
+                {% if qrcode %}
                     <div class="my-2 my-sm-0">
                         <button type='button' class='btn btn-secondary btn-lg' title='Show QR code' data-toggle='modal' data-target='#qrcode'>
                             <i class="fas fa-qrcode"></i>
                         </button>
-                        <button type="button" class="btn btn-secondary btn-lg" onclick="submit_event('shutdown_rc_server')" title="Shutdown server">
-                            <i class="fas fa-power-off"></i>
-                        </button>
-                    </div>
                 {% endif %}
+                        <a class="btn btn-secondary btn-lg" href="?shutdown" role="button">
+                            <i class="fas fa-power-off"></i>
+                        </a>
+                    </div>
             </div>
         </header>
 
-        {% if not require_login or session.get('logged_in', False) %}
+        {% if qrcode %}
             <!-- Modal -->
             <div class="modal fade" id="qrcode" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
@@ -45,33 +44,13 @@
 
 	<!-- Card grid-->
         <div role="container">
-            {% if not require_login or session.get('logged_in', False) %}
                 {% if events %}
                     <div class="grid">
                         {% for e in events %}
                         <div class='card bg-secondary text-light'>
-                            <a class='btn btn-secondary event-content' role='button' onclick="submit_event('{{e.event}}')">
-                                <div class="card-header">
-                                    {% if e.has_icon_path() %}
-                                    <img class="event-icon" src="{{e.icon_path}}">
-                                    {% else %}
-                                        {{e.event}}
-                                    {% endif %}
-                                </div>
-                                <div class="card-body text-left m-0 px-2 pb-1">
-                                    <!-- <h5 class="card-title">Dark card title</h5> -->
-                                    {% if e.has_exec_cmd() %}
-                                    <p class='card-text'>
-                                        <i class='fas fa-terminal'></i>
-                                        <span class='float-right text-truncate' style="max-width: 85%;"  data-toggle="tooltip" data-placement="top" title="{{e.exec_cmd}}"><kbd>{{e.exec_cmd}}</kbd></span>
-                                    </p>
-                                    {% endif %}
-                                    {% if e.has_exec_hotkey() %}
-                                        <p class='card-text'  >
-                                            <i class='far fa-keyboard'></i>
-                                            <span class='float-right text-truncate' style="max-width: 85%;" data-toggle="tooltip" data-placement="top" title="{{e.exec_hotkey}}"><kbd>{{e.exec_hotkey}}</kbd></span>
-                                        </p>
-                                    {% endif %}
+                            <a class='btn btn-secondary event-content' role='button' href='./{{ e }}'>
+                                <div class="card-body">
+                                    {{e}}
                                 </div>
                             </a>
                         </div>
@@ -83,47 +62,6 @@
                             <p class="lead">Please edit the configuration file to add commands and hotkeys.</p>
                         </div>
                 {% endif %}
-            {% else %}
-                <div class="container">
-                    <div class="jumbotron text-center">
-                        <div class="form-group">
-                            <input type="password" class="form-control" id="passwordInput" placeholder="Password">
-                        </div>
-                        <button type="submit" class="btn btn-primary" onclick="submit_password()">Login</button>
-                    </div>
-                </div>
-            {% endif %}
         </div>
-
-        <script>
-            function submit_event(key) {
-                fetch('./event?key=' + key)
-                    .then((response) => {
-                        return response.json();
-                    })
-                    .then((data) => {
-                        if (! data.press){
-                            console.log("Error in processing button");
-                        }
-                        // console.log(data);
-                    });
-            }
-
-            function submit_password() {
-                let password = $("#passwordInput").val()
-                window.location.replace('./login?password=' + btoa(password));
-                return false;
-            }
-
-            $("#passwordInput").keyup(function(event) {
-                if (event.keyCode === 13) {
-                    submit_password();
-                }
-            });
-
-            $(function () {
-              $('[data-toggle="tooltip"]').tooltip()
-            })
-        </script>
     </body>
 </html>

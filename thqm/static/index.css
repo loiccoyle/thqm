@@ -14,16 +14,8 @@
     padding: 0;
 }
 
-.event-icon {
-    max-height: 2.5rem;
-    padding: 0;
-    margin: -1.5rem;
-    vertical-align: middle;
-}
-
 @media all and (max-width: 1024px) {
     * {
         font-size: 22px;
     }
 }
-
