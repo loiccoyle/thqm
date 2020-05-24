@@ -19,7 +19,7 @@ setup(name='thqm',
       packages=['thqm'],
       entry_points={
           'console_scripts': [
-              'thqm = thqm.__main__:main'
+              'thqm = thqm.__cli__:main'
           ]
       },
       install_requires=REQUIREMENTS,

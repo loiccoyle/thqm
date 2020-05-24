@@ -2,7 +2,9 @@
 import sys
 import argparse
 
+from .utils import PYQRCODE_IMPORT
 from .server import start_server
+from .utils import generate_qr
 
 
 def main():
@@ -23,14 +25,22 @@ def main():
                         help="Entry seperator pattern.")
     args = parser.parse_args()
 
+    qr = generate_qr(password=args.password, port=args.port)
 
-    # print(sys.stdin.read().split())
-    # print([e.strip() for e in sys.stdin.read().split(args.seperator) if e])
+
+    if args.qrcode:
+        if PYQRCODE_IMPORT:
+            print(qr.terminal())
+            sys.exit(0)
+        else:
+            print("'pyqrcode' not installed.", file=sys.stderr)
+            sys.exit(1)
+
     start_server(events=[e.strip() for e in sys.stdin.read().split(args.seperator) if e],
                  username=args.username,
                  password=args.password,
                  port=args.port,
-                 qrcode=args.qrcode,
+                 qrcode=PYQRCODE_IMPORT,
                  )
 
 if __name__ == '__main__':
