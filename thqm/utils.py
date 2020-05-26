@@ -13,13 +13,13 @@ def generate_qr(port:int=8888, username:str='thqm', password:str=None,
     '''Generate the qrcode containing login credential if provided.
     '''
 
-	if password is not None:
-		qr_url = f'http://{username}:{password}@{get_ip()}:{port}/'
-	else:
-		qr_url = f'http://{get_ip()}:{port}/'
-	qr = pyqrcode.create(qr_url)
-	qr.svg(qr_path, module_color="#000000", background='#ffffff')
-	return qr
+    if password is not None:
+        qr_url = f'http://{username}:{password}@{get_ip()}:{port}/'
+    else:
+        qr_url = f'http://{get_ip()}:{port}/'
+    qr = pyqrcode.create(qr_url)
+    qr.svg(qr_path, module_color="#000000", background='#ffffff')
+    return qr
 
 
 def get_ip():
