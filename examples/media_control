@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function media_control {
+    while read event; do
+        case "$event" in
+            "Raise volume")
+                pactl set-sink-volume @DEFAULT_SINK@ +10%
+                ;;
+            "Lower volume")
+                pactl set-sink-volume @DEFAULT_SINK@ -10%
+                ;;
+            "Toggle mute")
+                pactl set-sink-mute @DEFAULT_SINK@ toggle
+                ;;
+            "Play/Pause")
+                xdotool key --clearmodifiers XF86AudioPlay
+                ;;
+            "Previous")
+                xdotool key --clearmodifiers XF86AudioPrev
+                ;;
+            "Next")
+                xdotool key --clearmodifiers XF86AudioNext
+                ;;
+            "Scrub right")
+                xdotool key --clearmodifiers Right
+                ;;
+            "Scrub left")
+                xdotool key --clearmodifiers Left
+                ;;
+            "Space")
+                xdotool key --clearmodifiers space
+                ;;
+            *)
+                # pass through for qr code printing
+                echo "$event"
+                ;;
+        esac
+    done
+}
+
+echo -e "Raise volume\nLower volume\nToggle mute\nPlay/Pause\nPrevious\nNext\nScrub right\nScrub left\nSpace" | thqm $@ | media_control
