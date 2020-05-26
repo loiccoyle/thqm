@@ -21,9 +21,10 @@ keywords = ["remote", "control", "HTTP-server", "flask", "thqm"]
 [tool.poetry.dependencies]
 python = "^3.6"
 jinja2 = "^2.11.2"
+pyqrcode = { version = "^1.2.1", optional = true }
 
-[tool.poetry.dev-dependencies]
-pyqrcode = "^1.2.1"
+[tool.poetry.extras]
+qrcode = ["pyqrcode"]
 
 [tool.poetry.scripts]
 thqm = 'thqm.__cli__:main'
