@@ -15,14 +15,14 @@
     <body class='bg-dark'>
         <header>
             <div class="navbar navbar-dark bg-dark box-shadow">
-                <a href="#" class="navbar-brand">thqm</a>
+                <a href='/' tabindex='-1' class="navbar-brand">thqm</a>
                 {% if qrcode %}
                     <div class="my-2 my-sm-0">
-                        <button type='button' class='btn btn-secondary btn-lg' title='Show QR code' data-toggle='modal' data-target='#qrcode'>
+                        <button tabindex='-1' type='button' class='btn btn-secondary btn-lg' title='Show QR code' data-toggle='modal' data-target='#qrcode'>
                             <i class="fas fa-qrcode"></i>
                         </button>
                 {% endif %}
-                        <a class="btn btn-secondary btn-lg" href="?shutdown" role="button">
+                        <a class="btn btn-secondary btn-lg text-light" onclick='fetch("?shutdown");' role="button">
                             <i class="fas fa-power-off"></i>
                         </a>
                     </div>
@@ -31,7 +31,7 @@
 
         {% if qrcode %}
             <!-- Modal -->
-            <div class="modal fade" id="qrcode" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="qrcode" tabindex="-1" role="dialog" aria-labelledby="modalQRCode" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content bg-dark text-light">
                   <div class="modal-body text-center">
@@ -42,26 +42,30 @@
             </div>
         {% endif %}
 
-	<!-- Card grid-->
-        <div role="container">
-                {% if events %}
-                    <div class="grid">
-                        {% for e in events %}
-                        <div class='card bg-secondary text-light'>
-                            <a class='btn btn-secondary event-content' role='button' href='./{{ e }}'>
-                                <div class="card-body">
-                                    {{e}}
-                                </div>
-                            </a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                        <div class="alert alert-primary">
-                            <h1 class="h4">No events configured!</h1>
-                            <p class="lead">Please edit the configuration file to add commands and hotkeys.</p>
-                        </div>
-                {% endif %}
-        </div>
+		{% if events %}
+			{% for e in events %}
+				<div class='my-2 mx-2 disable-dbl-tap-zoom'>
+					<a class='btn btn-secondary event-content' tabindex=0 role='button' onclick="fetch('./' + '{{ e }}')">
+						<pre class='my-0 text-light'>{{ e|safe }}</pre>
+					</a>
+				</div>
+			{% endfor %}
+		{% endif %}
     </body>
+	<script>
+		// Get the event buttons
+		var button = Array.from(document.getElementsByClassName("event-content"));
+
+		function addEnterToClick(element) {
+			element.addEventListener("keyup", function(event) {
+				// Number 13 is the "Enter" key on the keyboard
+				if (event.keyCode === 13) {
+					event.preventDefault();
+					element.click();
+				}
+			});
+		}
+		// add the eventListener to all the buttons
+		button.map(addEnterToClick);
+	</script>
 </html>

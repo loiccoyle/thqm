@@ -1,5 +1,6 @@
 import sys
 import shutil
+import threading
 
 from io import BytesIO
 from pathlib import Path
@@ -11,7 +12,8 @@ from .utils import PYQRCODE_IMPORT
 from .settings import BASE_DIR, JINJA_ENV
 
 
-def handler_factory(username:str='thqm', password:str=None, events:list=[], qrcode:bool=True):
+def handler_factory(username:str='thqm', password:str=None, events:list=[], qrcode:bool=True,
+                    oneshot=False):
 
     class HTTPHandler(BaseHTTPRequestHandler):
 
@@ -20,7 +22,8 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
                           '.css': 'text/css',
                           '.png': 'image/png',
                           '.jpg': 'image/jpeg',
-                          '.jpeg': 'image/jpeg'}
+                          '.jpeg': 'image/jpeg',
+                          '.svg': 'image/svg+xml'}
 
         def __init__(self, *args, **kwargs):
             self.qrcode = qrcode
@@ -52,6 +55,7 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
                 f.close()
 
         def do_HEADAUTH(self):
+            '''Handle the authentication in the header'''
             self.send_response(401)
             self.send_header('WWW-Authenticate', 'Basic realm=\"thqm\"')
             self.send_header('Content-type', 'text/html')
@@ -72,26 +76,33 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
                 f = None
                 ctype = None
 
-                if path in [BASE_DIR / e for e in self.events]:
+                if self.get_query(self.path) == 'shutdown':
+                    # shutdown server
+                    self.shutdown()
+                    return
+                elif path in [BASE_DIR / e for e in self.events]:
                     # If event
-                    print(path.name)
+                    print(path.relative_to(BASE_DIR), flush=True)
+                    if oneshot:
+                        # shutdown after print
+                        self.shutdown()
+                        return
                     self.send_response(302)
                     self.send_header("Location", '/')
                     self.end_headers()
-                    return None
+                    return
                 elif path == BASE_DIR:
                     # if control panel
                     contents = JINJA_ENV.get_template('index.html').render(events=self.events,
                                                                            qrcode=self.qrcode)
-                    contents = contents.encode('utf8')
-                    f = BytesIO(contents)
+                    f = BytesIO(contents.encode('utf8'))
                     ctype = 'text/html'
                 else:
                     # if anything else
                     try:
                         f = open(path, 'rb')
                     except IOError:
-                        return None
+                        return
                 if not ctype:
                     ctype = self.guess_type(path)
                 self.send_response(200)
@@ -101,19 +112,25 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
 
         def translate_path(self, path:str) -> Path:
             """Translate a /-separated PATH to the local filename syntax.
-
-            Components that mean special things to the local file system
-            (e.g. drive or directory names) are ignored.  (XXX They should
-            probably be diagnosed.)
-
             """
             # abandon query parameters
             path = path.split('?',1)[0]
             path = path.split('#',1)[0]
-            # Don't forget explicit trailing slash when normalizing. Issue17324
-            clean_path = unquote(path)[1:]
-            path = BASE_DIR / clean_path
-            return path
+            # remove first /
+            return BASE_DIR / unquote(path)[1:]
+
+        def get_query(self, path:str) -> Path:
+            """Get the first query parameter.
+            """
+            path = path.split('?', 1)
+            if len(path) > 1:
+                return path[1]
+
+        def shutdown(self):
+            '''Shutdown the server.
+            '''
+            killer = threading.Thread(target=self.server.shutdown)
+            killer.start()
 
         def copyfile(self, source, outputfile):
             """Copy all data between two file objects.
@@ -131,7 +148,7 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
             """
             shutil.copyfileobj(source, outputfile)
 
-        def guess_type(self, path):
+        def guess_type(self, path:Path) -> str:
             """Guess the type of a file.
 
             Argument is a PATH (a filename).
@@ -147,8 +164,7 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
             """
 
             ext = path.suffix.lower()
-            if ext in self.extensions_map:
-                return self.extensions_map.get(ext, self.extensions_map[''])
+            return self.extensions_map.get(ext, self.extensions_map[''])
 
         def log_message(self, *args, **kwargs):
             '''Disable all prints.
@@ -163,13 +179,19 @@ def start_server(events:list=[],
                  port:int=8888,
                  username:str='thqm',
                  password:str=None,
-                 qrcode=PYQRCODE_IMPORT):
+                 qrcode=PYQRCODE_IMPORT,
+                 oneshot=False):
 
     handler = handler_factory(events=events,
                               username=username,
                               password=password,
-                              qrcode=qrcode)
+                              qrcode=qrcode,
+                              oneshot=oneshot)
 
     server_address = ('', port)
     httpd = HTTPServer(server_address, handler)
-    httpd.serve_forever()
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.shutdown()
+        raise
