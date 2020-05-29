@@ -11,16 +11,16 @@ def main():
     """cli
     """
     parser = argparse.ArgumentParser(prog='thqm',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                     description='Remote command execution made easy.')
     parser.add_argument("-p", "--port", type=int, default=8888,
                         help="Port number.")
-    parser.add_argument('-q', '--qrcode', action='store_true',
-                        default=False,
+    parser.add_argument('-q', '--qrcode', action='store_true', default=False,
                         help='Show the qrcode and exits, requires "pyqrcode".')
     parser.add_argument("-pw", '--password', default=None,
                         help="Authentication password.")
     parser.add_argument('-u', '--username', default='thqm',
-                        help="Authentication username, only used if a password is provided.")
+                        help="Authentication username, only used if a PASSWORD is provided.")
     parser.add_argument('-s', '--seperator', default='\n',
                         help="Entry seperator pattern.")
     parser.add_argument('-o', '--oneshot', action='store_true', default=False,
