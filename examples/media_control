@@ -9,7 +9,7 @@ function media_control {
             "Lower volume")
                 pactl set-sink-volume @DEFAULT_SINK@ -10%
                 ;;
-            "Toggle mute")
+            "Mute/Unmute")
                 pactl set-sink-mute @DEFAULT_SINK@ toggle
                 ;;
             "Play/Pause")
@@ -38,4 +38,4 @@ function media_control {
     done
 }
 
-echo -e "Raise volume\nLower volume\nToggle mute\nPlay/Pause\nPrevious\nNext\nScrub right\nScrub left\nSpace" | thqm $@ | media_control
+echo -e "Raise volume\nLower volume\nMute/Unmute\nPlay/Pause\nPrevious\nNext\nScrub right\nScrub left\nSpace" | thqm $@ | media_control
