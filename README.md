@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://pypi.org/project/thqm/"><img src="https://img.shields.io/pypi/v/thqm"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%7C%20windows-informational">
 </p>
 
 > `thqm` takes its name from the arabic تحكم, pronounced tahakum, meaning control.
@@ -20,7 +21,7 @@ This makes it very flexible and script friendly. See the [examples](./examples) 
 ```shell
 pip install thqm
 ```
-`thqm` is compatible with linux & MacOS (maybe windows ?).
+`thqm` should work on linux, MacOS and Windows.
 
 It usually is a good idea to use a virtual environment, or maybe consider using [pipx](https://github.com/pipxproject/pipx).
 
@@ -67,3 +68,7 @@ The `-q` (requires `pyqrcode`) flag will print a qr-code in the terminal, this q
 <p align="center">
  <img src="./images/thqm_phone_portrait.png" width="200" />
 </p>
+
+# TODO
+- [ ] remove external css/JS dependencies
+- [ ] allow for custom `index.html` template and `index.css`
