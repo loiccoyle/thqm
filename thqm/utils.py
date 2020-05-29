@@ -8,6 +8,7 @@ except ImportError:
 
 from .settings import BASE_DIR
 
+
 def generate_qr(port:int=8888, username:str='thqm', password:str=None,
                 qr_path:Path=BASE_DIR / 'static' / 'qr_code.svg'):
     '''Generate the qrcode containing login credential if provided.
