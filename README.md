@@ -1,12 +1,13 @@
 <h1 align="center">thqm</h1>
-
 <h3 align="center"><img src="https://i.imgur.com/gVB270Z.png" width="150"></h3>
 <h5 align="center">Remote command execution made easy.</h5>
+
 <p align="center">
   <a href="https://pypi.org/project/thqm/"><img src="https://img.shields.io/pypi/v/thqm"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%7C%20windows-informational">
 </p>
+<img src="https://i.imgur.com/OrK36nl.png?1" align='right' width='170px'>
 
 > `thqm` takes its name from the arabic تحكم, pronounced tahakum, meaning control.
 
@@ -16,6 +17,10 @@
 In a sense its kind of like the [`dmenu`](https://tools.suckless.org/dmenu/)/[`rofi`](https://github.com/davatorium/rofi) of HTTP servers.
 
 This makes it very flexible and script friendly. See the [examples](./examples) folder for some scripts.
+
+&nbsp;
+
+&nbsp;
 
 # Installation
 ```shell
@@ -65,9 +70,6 @@ With the `-s` argument you can define the pattern on which to split `stdin`.
 The `-o` flag will stop the server after the first button press.
 
 The `-q` (requires `pyqrcode`) flag will print a qr-code in the terminal, this qr-code contains the credentials so it will bypass any authentication, the same is true for the in browser qr-code. This makes it particularly easy to share access with others.
-<p align="center">
- <img src="./images/thqm_phone_portrait.png" width="200" />
-</p>
 
 # TODO
 - [ ] remove external css/JS dependencies
