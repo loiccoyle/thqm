@@ -1,6 +1,6 @@
 <h1 align="center">thqm</h1>
 
-<h3 align="center"><img src="./images/logo.svg" width="150"></h3>
+<h3 align="center"><img src="https://i.imgur.com/gVB270Z.png" width="150"></h3>
 <h5 align="center">Remote command execution made easy.</h5>
 <p align="center">
   <a href="https://pypi.org/project/thqm/"><img src="https://img.shields.io/pypi/v/thqm"></a>
