@@ -34,19 +34,20 @@ It usually is a good idea to use a virtual environment, or maybe consider using 
 `thqm` requires the following to run:
   * `python3`
   * `jinja`
-  
+
 Optional:
   * `pyqrcode` for qrcode generation.
 
 # Usage
 Check the [examples](./examples) folder for some usage examples.
 
-```shell
-$ thqm --help
+```
+$thqm --help
+
 usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR]
             [-o]
 
-Start an interactive web page from standard input.
+Remote command execution made easy.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -61,7 +62,6 @@ optional arguments:
   -s SEPERATOR, --seperator SEPERATOR
                         Entry seperator pattern. (default: )
   -o, --oneshot         Shutdown server after first click. (default: False)
-
 ```
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
