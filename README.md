@@ -43,7 +43,7 @@ Optional:
 Check the [examples](./examples) folder for some usage examples.
 
 ```
-$thqm --help
+$ thqm --help
 
 usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR]
             [-o]
@@ -53,8 +53,7 @@ Remote command execution made easy.
 optional arguments:
   -h, --help            show this help message and exit
   -p PORT, --port PORT  Port number. (default: 8888)
-  -q, --qrcode          Show the qrcode and exits, requires "pyqrcode".
-                        (default: False)
+  -q, --qrcode          Show the qrcode, requires "pyqrcode". (default: False)
   -pw PASSWORD, --password PASSWORD
                         Authentication password. (default: None)
   -u USERNAME, --username USERNAME

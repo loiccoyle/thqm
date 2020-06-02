@@ -16,7 +16,7 @@ def main():
     parser.add_argument("-p", "--port", type=int, default=8888,
                         help="Port number.")
     parser.add_argument('-q', '--qrcode', action='store_true', default=False,
-                        help='Show the qrcode and exits, requires "pyqrcode".')
+                        help='Show the qrcode, requires "pyqrcode".')
     parser.add_argument("-pw", '--password', default=None,
                         help="Authentication password.")
     parser.add_argument('-u', '--username', default='thqm',
