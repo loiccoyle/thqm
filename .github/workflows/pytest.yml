@@ -53,7 +53,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: poetry install
+        run: poetry install -E qrcode
 
       - name: Run pytest
         shell: bash

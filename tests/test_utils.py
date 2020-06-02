@@ -11,12 +11,13 @@ class TestUtils(unittest.TestCase):
         self.test_folder.mkdir()
 
     def test_generate_qr(self):
-        qr = utils.generate_qr(port=8888,
-                               username='thqm',
-                               password=None,
-                               qr_path=self.test_folder / 'test_qr.svg')
-        self.assertTrue((self.test_folder / 'test_qr.svg').is_file())
-        self.assertEqual(qr.data.decode('utf8'), f'http://{utils.get_ip()}:8888/')
+        if utils.PYQRCODE_IMPORT:
+            qr = utils.generate_qr(port=8888,
+                                   username='thqm',
+                                   password=None,
+                                   qr_path=self.test_folder / 'test_qr.svg')
+            self.assertTrue((self.test_folder / 'test_qr.svg').is_file())
+            self.assertEqual(qr.data.decode('utf8'), f'http://{utils.get_ip()}:8888/')
 
     def test_get_ip(self):
         utils.get_ip()
