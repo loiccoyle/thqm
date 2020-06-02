@@ -6,7 +6,7 @@
   <a href="https://github.com/loiccoyle/thqm/actions?query=workflow%3Atests"><img src="https://github.com/loiccoyle/thqm/workflows/tests/badge.svg"></a>
   <a href="https://pypi.org/project/thqm/"><img src="https://img.shields.io/pypi/v/thqm"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%7C%20windows-informational">
+  <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-informational">
 </p>
 <img src="https://i.imgur.com/OrK36nl.png?1" align='right' width='170px'>
 
