@@ -5,51 +5,52 @@ from base64 import b64decode
 from thqm import server
 
 
-
 def make_testable(Handler):
 
-	class TestableHandler(Handler):
-		# On Python3, in socketserver.StreamRequestHandler, if this is
-		# set it will use makefile() to produce the output stream. Otherwise,
-		# it will use socketserver._SocketWriter, and we won't be able to get
-		# to the data
-		wbufsize = 1
+    class TestableHandler(Handler):
+        # On Python3, in socketserver.StreamRequestHandler, if this is
+        # set it will use makefile() to produce the output stream. Otherwise,
+        # it will use socketserver._SocketWriter, and we won't be able to get
+        # to the data
+        wbufsize = 1
 
-		def finish(self):
-			# Do not close self.wfile, so we can read its value
-			self.wfile.flush()
-			self.rfile.close()
+        def finish(self):
+            # Do not close self.wfile, so we can read its value
+            self.wfile.flush()
+            self.rfile.close()
 
-		def date_time_string(self, timestamp=None):
-			""" Mocked date time string """
-			return 'DATETIME'
+        def date_time_string(self, timestamp=None):
+            """Mocked date time string.
+            """
+            return 'DATETIME'
 
-		def version_string(self):
-			""" mock the server id """
-			return 'BaseHTTP/x.x Python/x.x.x'
+        def version_string(self):
+            """Mock the server id.
+            """
+            return 'BaseHTTP/x.x Python/x.x.x'
 
 
-	return TestableHandler
+    return TestableHandler
 
 
 class MockSocket:
-	def getsockname(self):
-		return ('sockname',)
+    def getsockname(self):
+        return ('sockname',)
 
 
 class MockRequest:
-	_sock = MockSocket()
+    _sock = MockSocket()
 
-	def __init__(self, path):
-		self._path = path
+    def __init__(self, path):
+        self._path = path
 
-	def makefile(self, *args, **kwargs):
-		if args[0] == 'rb':
-			return BytesIO(b"GET %s HTTP/1.0" % self._path)
-		elif args[0] == 'wb':
-			return BytesIO(b'')
-		else:
-			raise ValueError("Unknown file type to make", args, kwargs)
+    def makefile(self, *args, **kwargs):
+        if args[0] == 'rb':
+            return BytesIO(b"GET %s HTTP/1.0" % self._path)
+        elif args[0] == 'wb':
+            return BytesIO(b'')
+        else:
+            raise ValueError("Unknown file type to make", args, kwargs)
 
 
 class TestHandler(unittest.TestCase):

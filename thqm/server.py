@@ -12,14 +12,30 @@ from .utils import PYQRCODE_IMPORT
 from .settings import BASE_DIR, JINJA_ENV
 
 
-def handler_factory(username:str='thqm', password:str=None, events:list=[], qrcode:bool=True,
-                    oneshot=False):
+def handler_factory(username:str='thqm',
+                    password:str=None,
+                    events:list=[],
+                    qrcode:bool=True,
+                    oneshot:bool=False):
+    """Create a HTTPHandler class with the desired properties.
+
+    Args:
+        username: basic auth username.
+        password: basic auth password.
+        events: list of events with which to populate the page.
+        qrcode: user qrcode in the template.
+        oneshot: stop server after first click.
+
+    Returns:
+        HTTPHandler class.
+    """
 
     class HTTPHandler(BaseHTTPRequestHandler):
 
         extensions_map = {'.html': 'text/html',
                           '': 'application/octet-stream',  # Default
                           '.css': 'text/css',
+                          '.js': 'text/javascript',
                           '.png': 'image/png',
                           '.jpg': 'image/jpeg',
                           '.jpeg': 'image/jpeg',
@@ -39,7 +55,8 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
                 f.close()
 
         def do_GET(self):
-            """Serve a GET request."""
+            """Serve a GET request.
+            """
             if self.require_login:
                 if self.headers.get("Authorization") == "Basic " + self._auth:
                     self._do_GET()
@@ -49,66 +66,69 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
                 self._do_GET()
 
         def do_HEAD(self):
-            """Serve a HEAD request."""
+            """Serve a HEAD request.
+            """
             f = self.send_head()
             if f:
                 f.close()
 
         def do_HEADAUTH(self):
-            '''Handle the authentication in the header'''
+            """Handle the authentication in the header.
+            """
             self.send_response(401)
             self.send_header('WWW-Authenticate', 'Basic realm=\"thqm\"')
             self.send_header('Content-type', 'text/html')
             self.end_headers()
 
         def send_head(self):
-                """Common code for GET and HEAD commands.
+            """Common code for GET and HEAD commands.
 
-                This sends the response code and MIME headers.
+            This sends the response code and MIME headers.
 
-                Return value is either a file object (which has to be copied
-                to the outputfile by the caller unless the command was HEAD,
-                and must be closed by the caller under all circumstances), or
-                None, in which case the caller has nothing further to do.
+            Return value is either a file object (which has to be copied
+            to the outputfile by the caller unless the command was HEAD,
+            and must be closed by the caller under all circumstances), or
+            None, in which case the caller has nothing further to do.
+            """
+            path = self.translate_path(self.path)
+            f = None
+            ctype = None
 
-                """
-                path = self.translate_path(self.path)
-                f = None
-                ctype = None
-
-                if self.get_query(self.path) == 'shutdown':
-                    # shutdown server
+            if self.get_query(self.path) == 'shutdown':
+                # shutdown server
+                self.shutdown()
+                return
+            elif path in (BASE_DIR / e for e in self.events):
+                # If event
+                print(path.relative_to(BASE_DIR), flush=True)
+                if oneshot:
+                    # shutdown after print
                     self.shutdown()
                     return
-                elif path in [BASE_DIR / e for e in self.events]:
-                    # If event
-                    print(path.relative_to(BASE_DIR), flush=True)
-                    if oneshot:
-                        # shutdown after print
-                        self.shutdown()
-                        return
-                    self.send_response(302)
-                    self.send_header("Location", '/')
-                    self.end_headers()
-                    return
-                elif path == BASE_DIR:
-                    # if control panel
-                    contents = JINJA_ENV.get_template('index.html').render(events=self.events,
-                                                                           qrcode=self.qrcode)
-                    f = BytesIO(contents.encode('utf8'))
-                    ctype = 'text/html'
-                else:
-                    # if anything else
-                    try:
-                        f = open(path, 'rb')
-                    except IOError:
-                        return
-                if not ctype:
-                    ctype = self.guess_type(path)
-                self.send_response(200)
-                self.send_header("Content-type", ctype)
+                self.send_response(302)
+                self.send_header("Location", '/')
                 self.end_headers()
-                return f
+                return
+            elif path == BASE_DIR:
+                # if control panel
+                contents = JINJA_ENV.get_template('index.html').render(events=self.events,
+                                                                       qrcode=self.qrcode)
+                f = BytesIO(contents.encode('utf8'))
+                ctype = 'text/html'
+            elif (BASE_DIR / 'static') in path.parents:
+                # if anything else
+                try:
+                    f = open(path, 'rb')
+                except IOError:
+                    return
+            else:
+                return
+            if not ctype:
+                ctype = self.guess_type(path)
+            self.send_response(200)
+            self.send_header("Content-type", ctype)
+            self.end_headers()
+            return f
 
         def translate_path(self, path:str) -> Path:
             """Translate a /-separated PATH to the local filename syntax.
@@ -127,8 +147,8 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
                 return path[1]
 
         def shutdown(self):
-            '''Shutdown the server.
-            '''
+            """Shutdown the server.
+            """
             killer = threading.Thread(target=self.server.shutdown)
             killer.start()
 
@@ -144,7 +164,6 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
             the block size or perhaps to replace newlines by CRLF
             -- note however that this the default server uses this
             to copy binary data as well.
-
             """
             shutil.copyfileobj(source, outputfile)
 
@@ -160,15 +179,13 @@ def handler_factory(username:str='thqm', password:str=None, events:list=[], qrco
             up in the table self.extensions_map, using application/octet-stream
             as a default; however it would be permissible (if
             slow) to look inside the data to make a better guess.
-
             """
-
             ext = path.suffix.lower()
             return self.extensions_map.get(ext, self.extensions_map[''])
 
         def log_message(self, *args, **kwargs):
-            '''Disable all prints.
-            '''
+            """Disable all prints.
+            """
             pass
 
 
@@ -181,6 +198,16 @@ def start_server(events:list=[],
                  password:str=None,
                  qrcode=PYQRCODE_IMPORT,
                  oneshot=False):
+    """Start the server.
+
+    Args:
+        events: list of events.
+        port: port number on which to run the server.
+        username: login username.
+        password: login password.
+        qrcode: control whether to use qrcode.
+        oneshot: stop server after first click.
+    """
 
     handler = handler_factory(events=events,
                               username=username,

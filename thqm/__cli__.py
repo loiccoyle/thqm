@@ -8,7 +8,7 @@ from .utils import generate_qr
 
 
 def main():
-    """cli
+    """thqm cli.
     """
     parser = argparse.ArgumentParser(prog='thqm',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter,
