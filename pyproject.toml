@@ -8,7 +8,7 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
     "Topic :: Utilities",
     "Topic :: Home Automation",
-    "Operating System :: Microsoft :: Windows"
+    "Operating System :: Microsoft :: Windows",
     "Operating System :: Unix",
     "Operating System :: MacOS",
     "Programming Language :: Python",
