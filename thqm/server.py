@@ -12,11 +12,13 @@ from .utils import PYQRCODE_IMPORT
 from .settings import BASE_DIR, JINJA_ENV
 
 
-def handler_factory(username:str='thqm',
-                    password:str=None,
-                    events:list=[],
-                    qrcode:bool=True,
-                    oneshot:bool=False):
+def handler_factory(
+    username: str = "thqm",
+    password: str = None,
+    events: list = [],
+    qrcode: bool = True,
+    oneshot: bool = False,
+):
     """Create a HTTPHandler class with the desired properties.
 
     Args:
@@ -32,14 +34,16 @@ def handler_factory(username:str='thqm',
 
     class HTTPHandler(BaseHTTPRequestHandler):
 
-        extensions_map = {'.html': 'text/html',
-                          '': 'application/octet-stream',  # Default
-                          '.css': 'text/css',
-                          '.js': 'text/javascript',
-                          '.png': 'image/png',
-                          '.jpg': 'image/jpeg',
-                          '.jpeg': 'image/jpeg',
-                          '.svg': 'image/svg+xml'}
+        extensions_map = {
+            ".html": "text/html",
+            "": "application/octet-stream",  # Default
+            ".css": "text/css",
+            ".js": "text/javascript",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".svg": "image/svg+xml",
+        }
 
         def __init__(self, *args, **kwargs):
             self.qrcode = qrcode
@@ -76,8 +80,8 @@ def handler_factory(username:str='thqm',
             """Handle the authentication in the header.
             """
             self.send_response(401)
-            self.send_header('WWW-Authenticate', 'Basic realm=\"thqm\"')
-            self.send_header('Content-type', 'text/html')
+            self.send_header("WWW-Authenticate", 'Basic realm="thqm"')
+            self.send_header("Content-type", "text/html")
             self.end_headers()
 
         def send_head(self):
@@ -94,7 +98,7 @@ def handler_factory(username:str='thqm',
             f = None
             ctype = None
 
-            if self.get_query(self.path) == 'shutdown':
+            if self.get_query(self.path) == "shutdown":
                 # shutdown server
                 self.shutdown()
                 return
@@ -106,19 +110,20 @@ def handler_factory(username:str='thqm',
                     self.shutdown()
                     return
                 self.send_response(302)
-                self.send_header("Location", '/')
+                self.send_header("Location", "/")
                 self.end_headers()
                 return
             elif path == BASE_DIR:
                 # if control panel
-                contents = JINJA_ENV.get_template('index.html').render(events=self.events,
-                                                                       qrcode=self.qrcode)
-                f = BytesIO(contents.encode('utf8'))
-                ctype = 'text/html'
-            elif (BASE_DIR / 'static') in path.parents:
+                contents = JINJA_ENV.get_template("index.html").render(
+                    events=self.events, qrcode=self.qrcode
+                )
+                f = BytesIO(contents.encode("utf8"))
+                ctype = "text/html"
+            elif (BASE_DIR / "static") in path.parents:
                 # if anything else
                 try:
-                    f = open(path, 'rb')
+                    f = open(path, "rb")
                 except IOError:
                     return
             else:
@@ -130,19 +135,19 @@ def handler_factory(username:str='thqm',
             self.end_headers()
             return f
 
-        def translate_path(self, path:str) -> Path:
+        def translate_path(self, path: str) -> Path:
             """Translate a /-separated PATH to the local filename syntax.
             """
             # abandon query parameters
-            path = path.split('?',1)[0]
-            path = path.split('#',1)[0]
+            path = path.split("?", 1)[0]
+            path = path.split("#", 1)[0]
             # remove first /
             return BASE_DIR / unquote(path)[1:]
 
-        def get_query(self, path:str) -> Path:
+        def get_query(self, path: str) -> Path:
             """Get the first query parameter.
             """
-            path = path.split('?', 1)
+            path = path.split("?", 1)
             if len(path) > 1:
                 return path[1]
 
@@ -167,7 +172,7 @@ def handler_factory(username:str='thqm',
             """
             shutil.copyfileobj(source, outputfile)
 
-        def guess_type(self, path:Path) -> str:
+        def guess_type(self, path: Path) -> str:
             """Guess the type of a file.
 
             Argument is a PATH (a filename).
@@ -181,23 +186,24 @@ def handler_factory(username:str='thqm',
             slow) to look inside the data to make a better guess.
             """
             ext = path.suffix.lower()
-            return self.extensions_map.get(ext, self.extensions_map[''])
+            return self.extensions_map.get(ext, self.extensions_map[""])
 
         def log_message(self, *args, **kwargs):
             """Disable all prints.
             """
             pass
 
-
     return HTTPHandler
 
 
-def start_server(events:list=[],
-                 port:int=8888,
-                 username:str='thqm',
-                 password:str=None,
-                 qrcode=PYQRCODE_IMPORT,
-                 oneshot=False):
+def start_server(
+    events: list = [],
+    port: int = 8888,
+    username: str = "thqm",
+    password: str = None,
+    qrcode=PYQRCODE_IMPORT,
+    oneshot=False,
+):
     """Start the server.
 
     Args:
@@ -209,13 +215,15 @@ def start_server(events:list=[],
         oneshot: stop server after first click.
     """
 
-    handler = handler_factory(events=events,
-                              username=username,
-                              password=password,
-                              qrcode=qrcode,
-                              oneshot=oneshot)
+    handler = handler_factory(
+        events=events,
+        username=username,
+        password=password,
+        qrcode=qrcode,
+        oneshot=oneshot,
+    )
 
-    server_address = ('', port)
+    server_address = ("", port)
     httpd = HTTPServer(server_address, handler)
     try:
         httpd.serve_forever()
