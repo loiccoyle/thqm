@@ -30,6 +30,7 @@ thqm = 'thqm.__cli__:main'
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.2"
+black = "^19.10b0"
 
 [build-system]
 requires = ["poetry>=0.12"]
