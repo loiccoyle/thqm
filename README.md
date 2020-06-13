@@ -46,7 +46,7 @@ Check the [examples](./examples) folder for some usage examples.
 $ thqm --help
 
 usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR]
-            [-o]
+            [-o] [-t TITLE] [--no-shutdown]
 
 Remote command execution made easy.
 
@@ -62,6 +62,9 @@ optional arguments:
   -s SEPERATOR, --seperator SEPERATOR
                         Entry seperator pattern. (default: )
   -o, --oneshot         Shutdown server after first click. (default: False)
+  -t TITLE, --title TITLE
+                        Page title. (default: thqm)
+  --no-shutdown         Remove server shutdown button. (default: False)
 ```
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
