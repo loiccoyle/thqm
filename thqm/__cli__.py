@@ -23,16 +23,17 @@ def main():
         help='Show the qrcode in terminal, requires "pyqrcode".',
     )
     parser.add_argument(
-        "-pw", "--password", default=None, help="Authentication password."
+        "-pw", "--password", default=None, type=str, help="Authentication password."
     )
     parser.add_argument(
         "-u",
         "--username",
         default="thqm",
+        type=str,
         help="Authentication username, only used if a PASSWORD is provided.",
     )
     parser.add_argument(
-        "-s", "--seperator", default="\n", help="Entry seperator pattern."
+        "-s", "--seperator", default="\n", help="Entry seperator pattern.", type=str
     )
     parser.add_argument(
         "-o",
