@@ -27,6 +27,13 @@ This makes it very flexible and script friendly. See the [examples](./examples) 
 ```shell
 pip install thqm
 ```
+
+or with `pyqrcode`
+
+```shell
+pip install thqm[qrcode]
+```
+
 `thqm` should work on linux, MacOS and Windows.
 
 It usually is a good idea to use a virtual environment, or maybe consider using [pipx](https://github.com/pipxproject/pipx).
