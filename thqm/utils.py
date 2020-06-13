@@ -51,3 +51,9 @@ def get_ip() -> str:
     ip = s.getsockname()[0]
     s.close()
     return ip
+
+
+def echo(msg: str):
+    """Print and flush.
+    """
+    print(msg, flush=True)

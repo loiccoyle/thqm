@@ -8,23 +8,27 @@
     <link rel="stylesheet" type="text/css" href="static/index.css">
     <script src="static/js/jquery-3.5.1.slim.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
-    <title>thqm</title>
+    <title>{{ title }}</title>
   </head>
 
   <body class='bg-dark'>
     <header>
       <div class="navbar navbar-dark bg-dark box-shadow">
-        <a href='/' tabindex='-1' class="navbar-brand">thqm</a>
-        {% if qrcode %}
+          <a href='/' tabindex='-1' class="navbar-brand">{{ title }}</a>
+        {% if qrcode or shutdown_button %}
         <div class="my-2 my-sm-0">
+        {% if qrcode %}
           <button tabindex='-1' type='button' class='btn btn-secondary btn-lg' title='Show QR code' data-toggle='modal' data-target='#qrcode'>
             <img src='static/qrcode-icon.svg' width=20 height=20>
           </button>
         {% endif %}
+        {% if shutdown_button %}
           <a class="btn btn-secondary btn-lg text-light" onclick='fetch("?shutdown");' role="button">
             <img src='static/power-off-icon.svg' width=20 height=20>
           </a>
+        {% endif %}
         </div>
+        {% endif %}
       </div>
     </header>
     {% if qrcode %}

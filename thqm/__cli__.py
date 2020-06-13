@@ -3,8 +3,9 @@ import sys
 import argparse
 
 from .utils import PYQRCODE_IMPORT
-from .server import start_server
 from .utils import generate_qr
+from .utils import echo
+from .server import start_server
 
 
 def main():
@@ -42,6 +43,13 @@ def main():
         default=False,
         help="Shutdown server after first click.",
     )
+    parser.add_argument("-t", "--title", default="thqm", help="Page title.", type=str)
+    parser.add_argument(
+        "--no-shutdown",
+        action="store_true",
+        default=False,
+        help="Remove server shutdown button.",
+    )
     args = parser.parse_args()
 
     if PYQRCODE_IMPORT:
@@ -49,7 +57,7 @@ def main():
 
     if args.qrcode:
         if PYQRCODE_IMPORT:
-            print(qr.terminal(), flush=True)
+            echo(qr.terminal())
         else:
             print(
                 "'pyqrcode' not installed. To install 'pip install pyqrcode'.",
@@ -65,6 +73,8 @@ def main():
             port=args.port,
             qrcode=PYQRCODE_IMPORT,
             oneshot=args.oneshot,
+            title=args.title,
+            shutdown_button=not args.no_shutdown,
         )
     except KeyboardInterrupt:
         sys.exit(130)

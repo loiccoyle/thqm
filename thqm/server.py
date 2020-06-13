@@ -8,25 +8,24 @@ from base64 import b64encode
 from urllib.parse import unquote
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from .utils import PYQRCODE_IMPORT
+from .utils import PYQRCODE_IMPORT, echo
 from .settings import BASE_DIR, JINJA_ENV
 
 
 def handler_factory(
     username: str = "thqm",
     password: str = None,
-    events: list = [],
-    qrcode: bool = True,
     oneshot: bool = False,
+    **template_kwargs,
 ):
     """Create a HTTPHandler class with the desired properties.
 
     Args:
         username: basic auth username.
         password: basic auth password.
-        events: list of events with which to populate the page.
-        qrcode: user qrcode in the template.
         oneshot: stop server after first click.
+        **template_kwargs: events: list, title: str, qrcode: bool,
+            shutdown_button: bool
 
     Returns:
         HTTPHandler class.
@@ -46,8 +45,9 @@ def handler_factory(
         }
 
         def __init__(self, *args, **kwargs):
-            self.qrcode = qrcode
-            self.events = events
+            self.events = template_kwargs.get("events", [])
+            self.shutdown_button = template_kwargs.get("shutdown_button", True)
+
             self.require_login = password is not None
             self._auth = b64encode(f"{username}:{password}".encode()).decode()
             super().__init__(*args, **kwargs)
@@ -98,13 +98,13 @@ def handler_factory(
             f = None
             ctype = None
 
-            if self.get_query(self.path) == "shutdown":
+            if self.shutdown_button and self.get_query(self.path) == "shutdown":
                 # shutdown server
                 self.shutdown()
                 return
             elif path in (BASE_DIR / e for e in self.events):
                 # If event
-                print(path.relative_to(BASE_DIR), flush=True)
+                echo(path.relative_to(BASE_DIR))
                 if oneshot:
                     # shutdown after print
                     self.shutdown()
@@ -116,7 +116,7 @@ def handler_factory(
             elif path == BASE_DIR:
                 # if control panel
                 contents = JINJA_ENV.get_template("index.html").render(
-                    events=self.events, qrcode=self.qrcode
+                    **template_kwargs
                 )
                 f = BytesIO(contents.encode("utf8"))
                 ctype = "text/html"
@@ -201,8 +201,10 @@ def start_server(
     port: int = 8888,
     username: str = "thqm",
     password: str = None,
-    qrcode=PYQRCODE_IMPORT,
-    oneshot=False,
+    shutdown_button: bool = True,
+    qrcode: bool = PYQRCODE_IMPORT,
+    oneshot: bool = False,
+    title: str = "thqm",
 ):
     """Start the server.
 
@@ -211,16 +213,20 @@ def start_server(
         port: port number on which to run the server.
         username: login username.
         password: login password.
+        shutdown_button: allow the client to shutdown the server.
         qrcode: control whether to use qrcode.
         oneshot: stop server after first click.
+        title: page title.
     """
 
     handler = handler_factory(
-        events=events,
         username=username,
         password=password,
-        qrcode=qrcode,
+        shutdown_button=shutdown_button,
         oneshot=oneshot,
+        events=events,
+        title=title,
+        qrcode=qrcode,
     )
 
     server_address = ("", port)

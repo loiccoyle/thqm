@@ -66,9 +66,7 @@ class TestHandler(unittest.TestCase):
         )
         Handler = make_testable(Handler)
         handler = Handler(MockRequest(b"/"), (0, 0), None)
-        self.assertEqual(handler.qrcode, True)
         self.assertEqual(handler.require_login, True)
-        self.assertEqual(handler.events, ["event1", "event2"])
 
     def test_Handler_unauthorized(self):
         Handler = server.handler_factory(
@@ -120,5 +118,40 @@ class TestHandler(unittest.TestCase):
         response = response.decode("utf8")
         self.assertTrue("HTTP/1.0 200 OK" in response)
         self.assertTrue("qrcode" not in response)
+        for event in ["event1", "event2"]:
+            self.assertTrue(event in response)
+
+    def test_Handler_noshutdown(self):
+        Handler = server.handler_factory(
+            username="lcoyle",
+            password=None,
+            events=["event1", "event2"],
+            qrcode=True,
+            oneshot=False,
+            shutdown_button=False,
+        )
+        Handler = make_testable(Handler)
+        response = self._test(Handler, b"/")
+        response = response.decode("utf8")
+        self.assertTrue("HTTP/1.0 200 OK" in response)
+        self.assertTrue("shutdown" not in response)
+        for event in ["event1", "event2"]:
+            self.assertTrue(event in response)
+
+    def test_Handler_title(self):
+        Handler = server.handler_factory(
+            username="lcoyle",
+            password=None,
+            events=["event1", "event2"],
+            qrcode=True,
+            oneshot=False,
+            shutdown_button=True,
+            title="some awesome title",
+        )
+        Handler = make_testable(Handler)
+        response = self._test(Handler, b"/")
+        response = response.decode("utf8")
+        self.assertTrue("HTTP/1.0 200 OK" in response)
+        self.assertTrue("some awesome title" in response)
         for event in ["event1", "event2"]:
             self.assertTrue(event in response)
