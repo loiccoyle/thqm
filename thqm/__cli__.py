@@ -3,6 +3,7 @@ import argparse
 import sys
 
 from .server import start_server
+from .settings import CONF_DIR
 from .utils import (
     PYQRCODE_IMPORT,
     echo,
@@ -19,7 +20,11 @@ def main():
     parser = argparse.ArgumentParser(
         prog="thqm",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description="Remote command execution made easy.",
+        description=f"""\
+Remote command execution made easy.
+
+Custom styles should be added to {CONF_DIR}
+""",
     )
     parser.add_argument("-p", "--port", type=int, default=8901, help="Port number.")
     parser.add_argument(

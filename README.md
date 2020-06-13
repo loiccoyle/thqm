@@ -31,7 +31,7 @@ pip install thqm
 or with `pyqrcode`
 
 ```shell
-pip install thqm[qrcode]
+pip install 'thqm[qrcode]'
 ```
 
 `thqm` should work on linux, MacOS and Windows.
@@ -62,14 +62,16 @@ To add your own custom style, follow the folder structure of the provided exampl
 <link rel="stylesheet" type="text/css" href="static/index.css">
 ```
 
-
 # Usage
 Check the [examples](./examples) folder for some usage examples.
 
 ```
 $ thqm --help
 
-Remote command execution made easy.
+usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR] [-o] [-t TITLE]
+            [--no-shutdown] [--no-qrcode] [--style {default,pure_html}]
+
+Remote command execution made easy. Custom styles should be added to /home/lcoyle/.config/thqm
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -78,8 +80,8 @@ optional arguments:
   -pw PASSWORD, --password PASSWORD
                         Authentication password. (default: None)
   -u USERNAME, --username USERNAME
-                        Authentication username, only used if a PASSWORD is provided. (default:
-                        thqm)
+                        Authentication username, only used if a PASSWORD is provided.
+                        (default: thqm)
   -s SEPERATOR, --seperator SEPERATOR
                         Entry seperator pattern. (default: )
   -o, --oneshot         Shutdown server after first click. (default: False)
