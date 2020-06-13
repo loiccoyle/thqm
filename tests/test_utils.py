@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 from shutil import rmtree
+
 from thqm import utils
 
 

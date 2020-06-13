@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-import sys
 import argparse
+import sys
 
-from .utils import PYQRCODE_IMPORT
-from .utils import generate_qr
-from .utils import echo
 from .server import start_server
+from .utils import PYQRCODE_IMPORT, echo, generate_qr
 
 
 def main():

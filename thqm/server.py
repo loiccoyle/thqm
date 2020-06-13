@@ -1,15 +1,14 @@
-import sys
 import shutil
+import sys
 import threading
-
+from base64 import b64encode
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
 from pathlib import Path
-from base64 import b64encode
 from urllib.parse import unquote
-from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from .utils import PYQRCODE_IMPORT, echo
 from .settings import BASE_DIR, JINJA_ENV
+from .utils import PYQRCODE_IMPORT, echo
 
 
 def handler_factory(

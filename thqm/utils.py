@@ -1,6 +1,8 @@
 import socket
 from pathlib import Path
 
+from .settings import BASE_DIR
+
 try:
     import pyqrcode
 
@@ -8,7 +10,6 @@ try:
 except ImportError:
     PYQRCODE_IMPORT = False
 
-from .settings import BASE_DIR
 
 
 def generate_qr(

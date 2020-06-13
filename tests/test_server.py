@@ -1,7 +1,7 @@
 import unittest
-
-from io import BytesIO
 from base64 import b64decode
+from io import BytesIO
+
 from thqm import server
 
 
