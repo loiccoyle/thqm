@@ -52,26 +52,28 @@ Check the [examples](./examples) folder for some usage examples.
 ```
 $ thqm --help
 
-usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR]
-            [-o] [-t TITLE] [--no-shutdown]
+usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR] [-o]
+            [-t TITLE] [--no-shutdown] [--no-qrcode]
 
 Remote command execution made easy.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -p PORT, --port PORT  Port number. (default: 8888)
-  -q, --qrcode          Show the qrcode, requires "pyqrcode". (default: False)
+  -p PORT, --port PORT  Port number. (default: 8901)
+  -q, --show-qrcode     Show the qrcode in terminal, requires "pyqrcode". (default:
+                        False)
   -pw PASSWORD, --password PASSWORD
                         Authentication password. (default: None)
   -u USERNAME, --username USERNAME
-                        Authentication username, only used if a PASSWORD is
-                        provided. (default: thqm)
+                        Authentication username, only used if a PASSWORD is provided.
+                        (default: thqm)
   -s SEPERATOR, --seperator SEPERATOR
                         Entry seperator pattern. (default: )
   -o, --oneshot         Shutdown server after first click. (default: False)
   -t TITLE, --title TITLE
                         Page title. (default: thqm)
   --no-shutdown         Remove server shutdown button. (default: False)
+  --no-qrcode           Remove qrcode button. (default: False)
 ```
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
@@ -84,6 +86,8 @@ The `-q` (requires `pyqrcode`) flag will print a qr-code in the terminal, this q
 Use `-t` to change the page title.
 
 `--no-shutdown` removes the shutdown server button.
+
+`--no-qrcode` removes the qrcode button.
 
 # TODO
 - [ ] allow for custom `index.html` template and `index.css`

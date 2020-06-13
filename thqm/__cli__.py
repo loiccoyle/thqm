@@ -17,10 +17,10 @@ def main():
     parser.add_argument("-p", "--port", type=int, default=8901, help="Port number.")
     parser.add_argument(
         "-q",
-        "--qrcode",
+        "--show-qrcode",
         action="store_true",
         default=False,
-        help='Show the qrcode, requires "pyqrcode".',
+        help='Show the qrcode in terminal, requires "pyqrcode".',
     )
     parser.add_argument(
         "-pw", "--password", default=None, help="Authentication password."
@@ -48,20 +48,25 @@ def main():
         default=False,
         help="Remove server shutdown button.",
     )
+    parser.add_argument(
+        "--no-qrcode",
+        action="store_true",
+        default=not PYQRCODE_IMPORT,
+        help="Remove qrcode button.",
+    )
     args = parser.parse_args()
 
-    if PYQRCODE_IMPORT:
-        qr = generate_qr(username=args.username, password=args.password, port=args.port)
+    if not PYQRCODE_IMPORT and (args.show_qrcode or not args.no_qrcode):
+        print(
+            "'pyqrcode' not installed. To install 'pip install pyqrcode'.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-    if args.qrcode:
-        if PYQRCODE_IMPORT:
+    if args.show_qrcode or not args.no_qrcode:
+        qr = generate_qr(username=args.username, password=args.password, port=args.port)
+        if args.show_qrcode:
             echo(qr.terminal())
-        else:
-            print(
-                "'pyqrcode' not installed. To install 'pip install pyqrcode'.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
 
     try:
         start_server(
@@ -69,10 +74,10 @@ def main():
             username=args.username,
             password=args.password,
             port=args.port,
-            qrcode_button=PYQRCODE_IMPORT,
             oneshot=args.oneshot,
-            title=args.title,
+            qrcode_button=not args.no_qrcode,
             shutdown_button=not args.no_shutdown,
+            title=args.title,
         )
     except KeyboardInterrupt:
         sys.exit(130)
