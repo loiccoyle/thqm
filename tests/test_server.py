@@ -2,7 +2,7 @@ import unittest
 from base64 import b64decode
 from io import BytesIO
 
-from thqm import server
+from thqm import server, utils
 
 
 def make_testable(Handler):
@@ -52,31 +52,43 @@ class MockRequest:
 
 
 class TestHandler(unittest.TestCase):
+    def _render_template(self, **kwargs):
+        base_dir = utils.style_base_dir("default")
+        jinja_env = utils.create_jinja_env(base_dir)
+        template = jinja_env.get_template("index.html")
+        return BytesIO(template.render(**kwargs).encode("utf8"))
+
+    def _get_base_dir(self):
+        return utils.style_base_dir("default")
+
     def _test(self, TestableHandler, request):
         handler = TestableHandler(MockRequest(request), (0, 0), None)
         return handler.wfile.getvalue()
 
     def test_handler_factory(self):
         Handler = server.handler_factory(
+            base_dir=self._get_base_dir(),
             username="lcoyle",
             password="hunter2",
-            events=["event1", "event2"],
-            qrcode_button=True,
-            shutdown_button=True,
             oneshot=False,
+            jinja_template_rendered=self._render_template(
+                events=["event1", "event2"], qrcode_button=True, shutdown_button=True
+            ),
         )
+
         Handler = make_testable(Handler)
         handler = Handler(MockRequest(b"/"), (0, 0), None)
         self.assertEqual(handler.require_login, True)
 
     def test_Handler_unauthorized(self):
         Handler = server.handler_factory(
+            base_dir=self._get_base_dir(),
             username="lcoyle",
             password="hunter2",
-            events=["event1", "event2"],
-            qrcode_button=True,
-            shutdown_button=True,
             oneshot=False,
+            jinja_template_rendered=self._render_template(
+                events=["event1", "event2"], qrcode_button=True, shutdown_button=True
+            ),
         )
         Handler = make_testable(Handler)
         self.assertTrue(
@@ -85,12 +97,13 @@ class TestHandler(unittest.TestCase):
 
     def test_Handler_authorized(self):
         Handler = server.handler_factory(
+            base_dir=self._get_base_dir(),
             username="lcoyle",
             password=None,
-            events=["event1", "event2"],
-            qrcode_button=True,
-            shutdown_button=True,
             oneshot=False,
+            jinja_template_rendered=self._render_template(
+                events=["event1", "event2"], qrcode_button=True, shutdown_button=True
+            ),
         )
         Handler = make_testable(Handler)
         response = self._test(Handler, b"/")
@@ -101,22 +114,15 @@ class TestHandler(unittest.TestCase):
         for event in ["event1", "event2"]:
             self.assertTrue(event in response)
 
-        response = self._test(Handler, b"/event1").decode("utf8")
-        self.assertTrue("302 Found" in response)
-        self.assertTrue("Location: /" in response)
-
-        response = self._test(Handler, b"/event2").decode("utf8")
-        self.assertTrue("302 Found" in response)
-        self.assertTrue("Location: /" in response)
-
     def test_Handler_noqr(self):
         Handler = server.handler_factory(
+            base_dir=self._get_base_dir(),
             username="lcoyle",
             password=None,
-            events=["event1", "event2"],
-            qrcode_button=False,
-            shutdown_button=True,
             oneshot=False,
+            jinja_template_rendered=self._render_template(
+                events=["event1", "event2"], qrcode_button=False, shutdown_button=True
+            ),
         )
         Handler = make_testable(Handler)
         response = self._test(Handler, b"/")
@@ -129,12 +135,13 @@ class TestHandler(unittest.TestCase):
 
     def test_Handler_noshutdown(self):
         Handler = server.handler_factory(
+            base_dir=self._get_base_dir(),
             username="lcoyle",
             password=None,
-            events=["event1", "event2"],
-            qrcode_button=True,
             oneshot=False,
-            shutdown_button=False,
+            jinja_template_rendered=self._render_template(
+                events=["event1", "event2"], qrcode_button=True, shutdown_button=False
+            ),
         )
         Handler = make_testable(Handler)
         response = self._test(Handler, b"/")
@@ -147,13 +154,16 @@ class TestHandler(unittest.TestCase):
 
     def test_Handler_title(self):
         Handler = server.handler_factory(
+            base_dir=self._get_base_dir(),
             username="lcoyle",
             password=None,
-            events=["event1", "event2"],
-            qrcode_button=True,
-            shutdown_button=True,
             oneshot=False,
-            title="some awesome title",
+            jinja_template_rendered=self._render_template(
+                events=["event1", "event2"],
+                qrcode_button=True,
+                shutdown_button=True,
+                title="some awesome title",
+            ),
         )
         Handler = make_testable(Handler)
         response = self._test(Handler, b"/")

@@ -46,27 +46,40 @@ It usually is a good idea to use a virtual environment, or maybe consider using 
 Optional:
   * `pyqrcode` for qrcode generation.
 
+# Configuration
+`thqm` will create a config folder:
+  * Linux: `$XDG_CONFIG_HOME/thqm` (or `$HOME/.config/thqm` if `$XDG_CONFIG_HOME` is not set)
+  * MacOS: `~/Library/Application Support/thqm`
+  * Windows: `%LOCALAPPDATA%/thqm` (or `~/thqm`)
+
+This folder holds `thqm`'s custom styles. A bare bone example, `pure_html`, will be created.
+
+To add your own custom style, follow the folder structure of the provided example. Maybe have a look at the [`default`](https://github.com/loiccoyle/thqm/tree/master/thqm/styles/default) style.
+
+**Note:** the base folder of the server will the style's folder. So to access files in the `static` folder from your `index.html`:
+
+```html
+<link rel="stylesheet" type="text/css" href="static/index.css">
+```
+
+
 # Usage
 Check the [examples](./examples) folder for some usage examples.
 
 ```
 $ thqm --help
 
-usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR] [-o]
-            [-t TITLE] [--no-shutdown] [--no-qrcode]
-
 Remote command execution made easy.
 
 optional arguments:
   -h, --help            show this help message and exit
   -p PORT, --port PORT  Port number. (default: 8901)
-  -q, --show-qrcode     Show the qrcode in terminal, requires "pyqrcode". (default:
-                        False)
+  -q, --show-qrcode     Show the qrcode in terminal, requires "pyqrcode". (default: False)
   -pw PASSWORD, --password PASSWORD
                         Authentication password. (default: None)
   -u USERNAME, --username USERNAME
-                        Authentication username, only used if a PASSWORD is provided.
-                        (default: thqm)
+                        Authentication username, only used if a PASSWORD is provided. (default:
+                        thqm)
   -s SEPERATOR, --seperator SEPERATOR
                         Entry seperator pattern. (default: )
   -o, --oneshot         Shutdown server after first click. (default: False)
@@ -74,6 +87,8 @@ optional arguments:
                         Page title. (default: thqm)
   --no-shutdown         Remove server shutdown button. (default: False)
   --no-qrcode           Remove qrcode button. (default: False)
+  --style {default,pure_html}
+                        Page style. (default: default)
 ```
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
@@ -89,5 +104,4 @@ Use `-t` to change the page title.
 
 `--no-qrcode` removes the qrcode button.
 
-# TODO
-- [ ] allow for custom `index.html` template and `index.css`
+Select the page style using the `--style` argument. You can add custom styles in `thqm`'s config folder.

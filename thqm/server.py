@@ -2,29 +2,34 @@ import shutil
 import sys
 import threading
 from base64 import b64encode
+from copy import copy
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
 from pathlib import Path
+from typing import Text
 from urllib.parse import unquote
 
-from .settings import BASE_DIR, JINJA_ENV
-from .utils import PYQRCODE_IMPORT, echo
+from .settings import PKG_DIR
+from .utils import PYQRCODE_IMPORT, create_jinja_env, echo, style_base_dir
 
 
 def handler_factory(
+    jinja_template_rendered: BytesIO,
+    base_dir: Path,
+    events: list = [],
     username: str = "thqm",
     password: str = None,
     oneshot: bool = False,
-    **template_kwargs,
 ):
     """Create a HTTPHandler class with the desired properties.
 
     Args:
+        jinja_template_rendered: BytesIO object of the rendered template.
+        base_dir: directory containing the static/ and templates/ folders.
+        events: allowed events.
         username: basic auth username.
         password: basic auth password.
         oneshot: stop server after first click.
-        **template_kwargs: events: list, title: str, qrcode: bool,
-            shutdown_button: bool
 
     Returns:
         HTTPHandler class.
@@ -44,9 +49,7 @@ def handler_factory(
         }
 
         def __init__(self, *args, **kwargs):
-            self.events = template_kwargs.get("events", [])
-            self.shutdown_button = template_kwargs.get("shutdown_button", True)
-
+            self.events = events
             self.require_login = password is not None
             self._auth = b64encode(f"{username}:{password}".encode()).decode()
             super().__init__(*args, **kwargs)
@@ -97,13 +100,13 @@ def handler_factory(
             f = None
             ctype = None
 
-            if self.shutdown_button and self.get_query(self.path) == "shutdown":
+            if self.get_query(self.path) == "shutdown":
                 # shutdown server
                 self.shutdown()
                 return
-            elif path in (BASE_DIR / e for e in self.events):
+            elif path in (base_dir / e for e in self.events):
                 # If event
-                echo(path.relative_to(BASE_DIR))
+                echo(path.relative_to(base_dir))
                 if oneshot:
                     # shutdown after print
                     self.shutdown()
@@ -112,14 +115,11 @@ def handler_factory(
                 self.send_header("Location", "/")
                 self.end_headers()
                 return
-            elif path == BASE_DIR:
+            elif path == base_dir:
                 # if control panel
-                contents = JINJA_ENV.get_template("index.html").render(
-                    **template_kwargs
-                )
-                f = BytesIO(contents.encode("utf8"))
+                f = copy(jinja_template_rendered)
                 ctype = "text/html"
-            elif (BASE_DIR / "static") in path.parents:
+            elif (base_dir / "static") in path.parents:
                 # if anything else
                 try:
                     f = open(path, "rb")
@@ -141,7 +141,7 @@ def handler_factory(
             path = path.split("?", 1)[0]
             path = path.split("#", 1)[0]
             # remove first /
-            return BASE_DIR / unquote(path)[1:]
+            return base_dir / unquote(path)[1:]
 
         def get_query(self, path: str) -> Path:
             """Get the first query parameter.
@@ -200,32 +200,34 @@ def start_server(
     port: int = 8901,
     username: str = "thqm",
     password: str = None,
-    shutdown_button: bool = True,
-    qrcode_button: bool = PYQRCODE_IMPORT,
     oneshot: bool = False,
-    title: str = "thqm",
+    base_dir: Path = PKG_DIR / "styles/default",
+    **jinja_template_kwargs,
 ):
-    """Start the server.
+    """Renders the template and starts the server.
 
     Args:
         events: list of events.
         port: port number on which to run the server.
         username: login username.
         password: login password.
-        shutdown_button: allow the client to shutdown the server.
-        qrcode: control whether to use qrcode.
         oneshot: stop server after first click.
-        title: page title.
+        base_dir: server base directory, must have a templates/index.html file.
+        **jinja_template_kwargs: template args.
     """
 
+    jinja_env = create_jinja_env(base_dir)
+    template = jinja_env.get_template("index.html")
+
     handler = handler_factory(
+        base_dir=base_dir,
+        events=events,
         username=username,
         password=password,
-        shutdown_button=shutdown_button,
         oneshot=oneshot,
-        events=events,
-        title=title,
-        qrcode_button=qrcode_button,
+        jinja_template_rendered=BytesIO(
+            template.render(events=events, **jinja_template_kwargs).encode("utf8")
+        ),
     )
 
     server_address = ("", port)
