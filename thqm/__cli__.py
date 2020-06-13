@@ -69,7 +69,7 @@ def main():
             username=args.username,
             password=args.password,
             port=args.port,
-            qrcode=PYQRCODE_IMPORT,
+            qrcode_button=PYQRCODE_IMPORT,
             oneshot=args.oneshot,
             title=args.title,
             shutdown_button=not args.no_shutdown,

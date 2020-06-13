@@ -1,3 +1,10 @@
+{# thqm template
+    args:
+        title (str): page title.
+        qrcode_button (bool): show qrcode button.
+        shutdown_button (bool): show shutdown button.
+        events (list): list of strings.
+#}
 <!DOCTYPE html>
 <html>
   <head>
@@ -15,15 +22,15 @@
     <header>
       <div class="navbar navbar-dark bg-dark box-shadow">
           <a href='/' tabindex='-1' class="navbar-brand">{{ title }}</a>
-        {% if qrcode or shutdown_button %}
+        {% if qrcode_button or shutdown_button %}
         <div class="my-2 my-sm-0">
-        {% if qrcode %}
-          <button tabindex='-1' type='button' class='btn btn-secondary btn-lg' title='Show QR code' data-toggle='modal' data-target='#qrcode'>
+        {% if qrcode_button %}
+          <button id='qrcode-btn' tabindex='-1' type='button' class='btn btn-secondary btn-lg' title='Show QR code' data-toggle='modal' data-target='#qrcode'>
             <img src='static/qrcode-icon.svg' width=20 height=20>
           </button>
         {% endif %}
         {% if shutdown_button %}
-          <a class="btn btn-secondary btn-lg text-light" onclick='fetch("?shutdown");' role="button">
+          <a id='shutdown-btn' class="btn btn-secondary btn-lg text-light" onclick='fetch("?shutdown");' role="button">
             <img src='static/power-off-icon.svg' width=20 height=20>
           </a>
         {% endif %}
@@ -31,7 +38,7 @@
         {% endif %}
       </div>
     </header>
-    {% if qrcode %}
+    {% if qrcode_button %}
     <!-- Modal -->
     <div class="modal fade" id="qrcode" tabindex="-1" role="dialog" aria-labelledby="modalQRCode" aria-hidden="true">
       <div class="modal-dialog" role="document">

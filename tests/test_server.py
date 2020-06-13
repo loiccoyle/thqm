@@ -61,7 +61,8 @@ class TestHandler(unittest.TestCase):
             username="lcoyle",
             password="hunter2",
             events=["event1", "event2"],
-            qrcode=True,
+            qrcode_button=True,
+            shutdown_button=True,
             oneshot=False,
         )
         Handler = make_testable(Handler)
@@ -73,7 +74,8 @@ class TestHandler(unittest.TestCase):
             username="lcoyle",
             password="hunter2",
             events=["event1", "event2"],
-            qrcode=True,
+            qrcode_button=True,
+            shutdown_button=True,
             oneshot=False,
         )
         Handler = make_testable(Handler)
@@ -86,14 +88,16 @@ class TestHandler(unittest.TestCase):
             username="lcoyle",
             password=None,
             events=["event1", "event2"],
-            qrcode=True,
+            qrcode_button=True,
+            shutdown_button=True,
             oneshot=False,
         )
         Handler = make_testable(Handler)
         response = self._test(Handler, b"/")
         response = response.decode("utf8")
         self.assertTrue("HTTP/1.0 200 OK" in response)
-        self.assertTrue("qrcode" in response)
+        self.assertTrue("qrcode-btn" in response)
+        self.assertTrue("shutdown-btn" in response)
         for event in ["event1", "event2"]:
             self.assertTrue(event in response)
 
@@ -110,14 +114,16 @@ class TestHandler(unittest.TestCase):
             username="lcoyle",
             password=None,
             events=["event1", "event2"],
-            qrcode=False,
+            qrcode_button=False,
+            shutdown_button=True,
             oneshot=False,
         )
         Handler = make_testable(Handler)
         response = self._test(Handler, b"/")
         response = response.decode("utf8")
         self.assertTrue("HTTP/1.0 200 OK" in response)
-        self.assertTrue("qrcode" not in response)
+        self.assertTrue("qrcode-btn" not in response)
+        self.assertTrue("shutdown-btn" in response)
         for event in ["event1", "event2"]:
             self.assertTrue(event in response)
 
@@ -126,7 +132,7 @@ class TestHandler(unittest.TestCase):
             username="lcoyle",
             password=None,
             events=["event1", "event2"],
-            qrcode=True,
+            qrcode_button=True,
             oneshot=False,
             shutdown_button=False,
         )
@@ -134,7 +140,8 @@ class TestHandler(unittest.TestCase):
         response = self._test(Handler, b"/")
         response = response.decode("utf8")
         self.assertTrue("HTTP/1.0 200 OK" in response)
-        self.assertTrue("shutdown" not in response)
+        self.assertTrue("qrcode-btn" in response)
+        self.assertTrue("shutdown-btn" not in response)
         for event in ["event1", "event2"]:
             self.assertTrue(event in response)
 
@@ -143,9 +150,9 @@ class TestHandler(unittest.TestCase):
             username="lcoyle",
             password=None,
             events=["event1", "event2"],
-            qrcode=True,
-            oneshot=False,
+            qrcode_button=True,
             shutdown_button=True,
+            oneshot=False,
             title="some awesome title",
         )
         Handler = make_testable(Handler)
@@ -153,5 +160,7 @@ class TestHandler(unittest.TestCase):
         response = response.decode("utf8")
         self.assertTrue("HTTP/1.0 200 OK" in response)
         self.assertTrue("some awesome title" in response)
+        self.assertTrue("qrcode-btn" in response)
+        self.assertTrue("shutdown-btn" in response)
         for event in ["event1", "event2"]:
             self.assertTrue(event in response)

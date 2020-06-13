@@ -201,7 +201,7 @@ def start_server(
     username: str = "thqm",
     password: str = None,
     shutdown_button: bool = True,
-    qrcode: bool = PYQRCODE_IMPORT,
+    qrcode_button: bool = PYQRCODE_IMPORT,
     oneshot: bool = False,
     title: str = "thqm",
 ):
@@ -225,7 +225,7 @@ def start_server(
         oneshot=oneshot,
         events=events,
         title=title,
-        qrcode=qrcode,
+        qrcode_button=qrcode_button,
     )
 
     server_address = ("", port)
