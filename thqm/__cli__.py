@@ -16,7 +16,7 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description="Remote command execution made easy.",
     )
-    parser.add_argument("-p", "--port", type=int, default=8888, help="Port number.")
+    parser.add_argument("-p", "--port", type=int, default=8901, help="Port number.")
     parser.add_argument(
         "-q",
         "--qrcode",

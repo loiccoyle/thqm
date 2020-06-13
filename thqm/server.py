@@ -198,7 +198,7 @@ def handler_factory(
 
 def start_server(
     events: list = [],
-    port: int = 8888,
+    port: int = 8901,
     username: str = "thqm",
     password: str = None,
     shutdown_button: bool = True,
