@@ -74,5 +74,9 @@ The `-o` flag will stop the server after the first button press.
 
 The `-q` (requires `pyqrcode`) flag will print a qr-code in the terminal, this qr-code contains the credentials so it will bypass any authentication, the same is true for the in browser qr-code. This makes it particularly easy to share access with others.
 
+Use `-t` to change the page title.
+
+`--no-shutdown` removes the shutdown server button.
+
 # TODO
 - [ ] allow for custom `index.html` template and `index.css`
