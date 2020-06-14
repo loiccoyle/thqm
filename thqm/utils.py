@@ -1,3 +1,4 @@
+import argparse
 import socket
 from pathlib import Path
 
@@ -125,3 +126,14 @@ def init_conf_folder():
             if not folder.is_dir():
                 folder.mkdir()
         (CONF_DIR / "pure_html/templates/index.html").write_text(EXAMPLE_PURE_HTML)
+
+
+class ArgFormatter(argparse.RawTextHelpFormatter,):
+    def _get_help_string(self, action):
+        help = action.help
+        if "%(default)" not in action.help:
+            if action.default is not argparse.SUPPRESS:
+                defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+                if action.option_strings or action.nargs in defaulting_nargs:
+                    help += " (default: %(default)r)"
+        return help

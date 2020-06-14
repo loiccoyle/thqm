@@ -6,6 +6,7 @@ from .server import start_server
 from .settings import CONF_DIR
 from .utils import (
     PYQRCODE_IMPORT,
+    ArgFormatter,
     echo,
     generate_qr,
     get_styles,
@@ -19,7 +20,7 @@ def main():
     """
     parser = argparse.ArgumentParser(
         prog="thqm",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        formatter_class=ArgFormatter,
         description=f"""\
 Remote command execution made easy.
 

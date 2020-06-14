@@ -71,7 +71,9 @@ $ thqm --help
 usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR] [-o] [-t TITLE]
             [--no-shutdown] [--no-qrcode] [--style {default,pure_html}]
 
-Remote command execution made easy. Custom styles should be added to /home/lcoyle/.config/thqm
+Remote command execution made easy.
+
+Custom styles should be added to /home/lcoyle/.config/thqm
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -80,17 +82,16 @@ optional arguments:
   -pw PASSWORD, --password PASSWORD
                         Authentication password. (default: None)
   -u USERNAME, --username USERNAME
-                        Authentication username, only used if a PASSWORD is provided.
-                        (default: thqm)
+                        Authentication username, only used if a PASSWORD is provided. (default: 'thqm')
   -s SEPERATOR, --seperator SEPERATOR
-                        Entry seperator pattern. (default: )
+                        Entry seperator pattern. (default: '\n')
   -o, --oneshot         Shutdown server after first click. (default: False)
   -t TITLE, --title TITLE
-                        Page title. (default: thqm)
+                        Page title. (default: 'thqm')
   --no-shutdown         Remove server shutdown button. (default: False)
   --no-qrcode           Remove qrcode button. (default: False)
   --style {default,pure_html}
-                        Page style. (default: default)
+                        Page style. (default: 'default')
 ```
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
