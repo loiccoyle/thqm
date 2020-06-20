@@ -10,19 +10,19 @@ class TestUtils(unittest.TestCase):
         self.test_folder = Path("test_utils")
         self.test_folder.mkdir()
 
-    def test_generate_qr(self):
-        if utils.PYQRCODE_IMPORT:
-            qr = utils.generate_qr(
-                port=8888,
-                username="thqm",
-                password=None,
-                qr_path=self.test_folder / "test_qr.svg",
-            )
-            self.assertTrue((self.test_folder / "test_qr.svg").is_file())
-            self.assertEqual(qr.data.decode("utf8"), f"http://{utils.get_ip()}:8888/")
-
     def test_get_ip(self):
         utils.get_ip()
+
+    def test_generate_qr(self):
+        if utils.PYQRCODE_IMPORT:
+            qr, qrsvg = utils.generate_qr(data="somedata")
+            self.assertEqual(qr.data.decode("utf8"), "somedata")
+
+    def test_get_url(self):
+        url = utils.get_url(9809, "aaa", "hunter2")
+        self.assertEqual(url, f"http://aaa:hunter2@{utils.get_ip()}:9809/")
+        url = utils.get_url(9809, "aa", None)
+        self.assertEqual(url, f"http://{utils.get_ip()}:9809/")
 
     def test_echo(self):
         utils.echo("test echo")
@@ -44,6 +44,8 @@ class TestUtils(unittest.TestCase):
     def test_create_jinja_env(self):
         env = utils.create_jinja_env(utils.style_base_dir("default"))
         self.assertTrue("index.html" in env.list_templates())
+        with self.assertRaises(FileNotFoundError):
+            utils.create_jinja_env(Path(__file__))
 
     def tearDown(self):
         rmtree(self.test_folder)

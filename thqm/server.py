@@ -1,22 +1,20 @@
 import shutil
-import sys
 import threading
 from base64 import b64encode
 from copy import copy
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
 from pathlib import Path
-from typing import Text
 from urllib.parse import unquote
 
 from .settings import PKG_DIR
-from .utils import PYQRCODE_IMPORT, create_jinja_env, echo, style_base_dir
+from .utils import create_jinja_env, echo
 
 
 def handler_factory(
     jinja_template_rendered: BytesIO,
     base_dir: Path,
-    events: list = [],
+    events: list = None,
     username: str = "thqm",
     password: str = None,
     oneshot: bool = False,
@@ -49,7 +47,10 @@ def handler_factory(
         }
 
         def __init__(self, *args, **kwargs):
-            self.events = events
+            if events is None:
+                self.events = []
+            else:
+                self.events = events
             self.require_login = password is not None
             self._auth = b64encode(f"{username}:{password}".encode()).decode()
             super().__init__(*args, **kwargs)
@@ -104,9 +105,13 @@ def handler_factory(
                 # shutdown server
                 self.shutdown()
                 return
-            elif path in (base_dir / e for e in self.events):
+            elif path == "":
+                # if main page
+                f = copy(jinja_template_rendered)
+                ctype = "text/html"
+            elif path in self.events:
                 # If event
-                echo(path.relative_to(base_dir))
+                echo(path)
                 if oneshot:
                     # shutdown after print
                     self.shutdown()
@@ -115,14 +120,10 @@ def handler_factory(
                 self.send_header("Location", "/")
                 self.end_headers()
                 return
-            elif path == base_dir:
-                # if control panel
-                f = copy(jinja_template_rendered)
-                ctype = "text/html"
-            elif (base_dir / "static") in path.parents:
+            elif "static" in map(str, Path(path).parents):
                 # if anything else
                 try:
-                    f = open(path, "rb")
+                    f = open(base_dir / path, "rb")
                 except IOError:
                     return
             else:
@@ -134,14 +135,14 @@ def handler_factory(
             self.end_headers()
             return f
 
-        def translate_path(self, path: str) -> Path:
-            """Translate a /-separated PATH to the local filename syntax.
+        def translate_path(self, path: str) -> str:
+            """Cleanup path.
             """
             # abandon query parameters
             path = path.split("?", 1)[0]
             path = path.split("#", 1)[0]
             # remove first /
-            return base_dir / unquote(path)[1:]
+            return unquote(path)[1:]
 
         def get_query(self, path: str) -> Path:
             """Get the first query parameter.
@@ -171,7 +172,7 @@ def handler_factory(
             """
             shutil.copyfileobj(source, outputfile)
 
-        def guess_type(self, path: Path) -> str:
+        def guess_type(self, path: str) -> str:
             """Guess the type of a file.
 
             Argument is a PATH (a filename).
@@ -184,13 +185,12 @@ def handler_factory(
             as a default; however it would be permissible (if
             slow) to look inside the data to make a better guess.
             """
-            ext = path.suffix.lower()
+            ext = Path(path).suffix.lower()
             return self.extensions_map.get(ext, self.extensions_map[""])
 
         def log_message(self, *args, **kwargs):
             """Disable all prints.
             """
-            pass
 
     return HTTPHandler
 
@@ -200,6 +200,7 @@ def start_server(
     port: int = 8901,
     username: str = "thqm",
     password: str = None,
+    qrsvg: str = None,
     oneshot: bool = False,
     base_dir: Path = PKG_DIR / "styles/default",
     **jinja_template_kwargs,
@@ -211,6 +212,7 @@ def start_server(
         port: port number on which to run the server.
         username: login username.
         password: login password.
+        qrsvg: qrcode svg elements.
         oneshot: stop server after first click.
         base_dir: server base directory, must have a templates/index.html file.
         **jinja_template_kwargs: template args.
@@ -226,7 +228,9 @@ def start_server(
         password=password,
         oneshot=oneshot,
         jinja_template_rendered=BytesIO(
-            template.render(events=events, **jinja_template_kwargs).encode("utf8")
+            template.render(
+                events=events, qrcode=qrsvg, **jinja_template_kwargs,
+            ).encode("utf8")
         ),
     )
 

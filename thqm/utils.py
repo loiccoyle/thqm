@@ -1,10 +1,11 @@
 import argparse
 import socket
+from io import BytesIO
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, PackageLoader, select_autoescape
 
-from .settings import CONF_DIR, EXAMPLE_PURE_HTML, PKG_DIR, PLATFORM
+from .settings import CONF_DIR, EXAMPLE_PURE_HTML, PKG_DIR
 
 try:
     import pyqrcode
@@ -14,33 +15,34 @@ except ImportError:
     PYQRCODE_IMPORT = False
 
 
-def generate_qr(
-    port: int = 8888,
-    username: str = "thqm",
-    password: str = None,
-    qr_path: Path = PKG_DIR / "styles/default/static/qr_code.svg",
-):
+def get_url(port: int, username: str, password: str) -> str:
+    if password is not None and username is not None:
+        return f"http://{username}:{password}@{get_ip()}:{port}/"
+    return f"http://{get_ip()}:{port}/"
+
+
+def generate_qr(data: str) -> tuple:
     """Generate the qrcode containing login credential if provided.
     Requires 'pyqrcode'.
 
     Args:
-        port: port number.
-        username: login username.
-        password: login password.
-        qr_path: path where to store the generated qr code svg.
+        data: data to encode in qrcode.
 
     Returns:
-        A pyqrcode.qr object containing the url and login credentials if
-        provided.
+        tuple of pyqrcode.qr object and qrcode svg string.
     """
-
-    if password is not None:
-        qr_url = f"http://{username}:{password}@{get_ip()}:{port}/"
-    else:
-        qr_url = f"http://{get_ip()}:{port}/"
-    qr = pyqrcode.create(qr_url)
-    qr.svg(qr_path, module_color="#000000", background="#ffffff")
-    return qr
+    qr = pyqrcode.create(data)
+    qr_buf = BytesIO()
+    qr.svg(
+        qr_buf,
+        module_color="#000000",
+        background="#ffffff",
+        scale=5,
+        lineclass="qrcode-line",
+        svgclass="qrcode",
+        omithw=True,
+    )
+    return qr, qr_buf.getvalue().decode("utf8")
 
 
 def get_ip() -> str:
@@ -49,11 +51,11 @@ def get_ip() -> str:
     Returns:
         LAN ip.
     """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))  # checks if device is connected to internet
-    ip = s.getsockname()[0]
-    s.close()
-    return ip
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.connect(("8.8.8.8", 80))  # checks if device is connected to internet
+    ip_addr = sock.getsockname()[0]
+    sock.close()
+    return ip_addr
 
 
 def echo(msg: str):
@@ -62,17 +64,13 @@ def echo(msg: str):
     print(msg, flush=True)
 
 
-def check_base_dir(custom_folder: Path) -> bool:
+def check_base_dir(folder: Path) -> bool:
     """Check to make sure the minimum requirements are met.
 
     Return:
-        True if templates/index.html exists in custom_folder, False otherwise.
+        True if template/index.html exists in folder, False otherwise.
     """
-    return (
-        (custom_folder / "static").is_dir()
-        and (custom_folder / "templates").is_dir()
-        and (custom_folder / "templates/index.html").is_file()
-    )
+    return (folder / "template").is_dir() and (folder / "template/index.html").is_file()
 
 
 def get_styles() -> list:
@@ -92,25 +90,18 @@ def style_base_dir(style: str) -> Path:
     return styles[style]
 
 
-def create_jinja_env(custom_folder: Path = None) -> Environment:
-    """Create a jinja environment for the custom path. custom_folder should contain a
-    templates/index.html file.
+def create_jinja_env(folder: Path) -> Environment:
+    """Create a jinja environment for the path. folder should contain a
+    template/index.html file.
     """
-    if custom_folder is not None:
-        if not check_base_dir(custom_folder):
-            raise FileNotFoundError(
-                f"'{custom_folder}' not valid, must contain 'templates/index.html'."
-            )
-        else:
-            env = Environment(
-                loader=FileSystemLoader(custom_folder / "templates"),
-                autoescape=select_autoescape(["html", "xml"]),
-            )
-    else:
-        env = Environment(
-            loader=PackageLoader("thqm", "templates"),
-            autoescape=select_autoescape(["html", "xml"]),
+    if not check_base_dir(folder):
+        raise FileNotFoundError(
+            f"'{folder}' not valid, must contain 'template/index.html'."
         )
+    env = Environment(
+        loader=FileSystemLoader(folder / "template"),
+        autoescape=select_autoescape(["html", "xml"]),
+    )
     return env
 
 
@@ -119,21 +110,21 @@ def init_conf_folder():
         CONF_DIR,
         CONF_DIR / "pure_html",
         CONF_DIR / "pure_html/static",
-        CONF_DIR / "pure_html/templates",
+        CONF_DIR / "pure_html/template",
     ]
     if not CONF_DIR.is_dir():
         for folder in folders:
             if not folder.is_dir():
                 folder.mkdir()
-        (CONF_DIR / "pure_html/templates/index.html").write_text(EXAMPLE_PURE_HTML)
+        (CONF_DIR / "pure_html/template/index.html").write_text(EXAMPLE_PURE_HTML)
 
 
 class ArgFormatter(argparse.RawTextHelpFormatter,):
-    def _get_help_string(self, action):
-        help = action.help
+    def _get_help_string(self, action) -> str:
+        help_str = action.help
         if "%(default)" not in action.help:
             if action.default is not argparse.SUPPRESS:
                 defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
                 if action.option_strings or action.nargs in defaulting_nargs:
-                    help += " (default: %(default)r)"
-        return help
+                    help_str += " (default: %(default)r)"
+        return help_str

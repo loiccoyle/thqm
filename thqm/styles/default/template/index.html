@@ -4,6 +4,7 @@
         qrcode_button (bool): show qrcode button.
         shutdown_button (bool): show shutdown button.
         events (list): list of strings.
+        qrcode (str): qrcode svg elements
 #}
 <!DOCTYPE html>
 <html>
@@ -44,7 +45,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content bg-dark text-light">
           <div class="modal-body text-center">
-              <img src='../static/qr_code.svg' style="width: 100%">
+              {{ qrcode|safe }}
           </div>
         </div>
       </div>

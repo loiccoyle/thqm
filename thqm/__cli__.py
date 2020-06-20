@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import json
 import sys
 
 from .server import start_server
@@ -10,6 +11,7 @@ from .utils import (
     echo,
     generate_qr,
     get_styles,
+    get_url,
     init_conf_folder,
     style_base_dir,
 )
@@ -18,6 +20,10 @@ from .utils import (
 def main():
     """thqm cli.
     """
+    # init the configuration folder
+    init_conf_folder()
+
+    # argument parsing
     parser = argparse.ArgumentParser(
         prog="thqm",
         formatter_class=ArgFormatter,
@@ -29,16 +35,6 @@ Custom styles should be added to {CONF_DIR}
     )
     parser.add_argument("-p", "--port", type=int, default=8901, help="Port number.")
     parser.add_argument(
-        "-q",
-        "--show-qrcode",
-        action="store_true",
-        default=False,
-        help='Show the qrcode in terminal, requires "pyqrcode".',
-    )
-    parser.add_argument(
-        "-pw", "--password", default=None, type=str, help="Authentication password."
-    )
-    parser.add_argument(
         "-u",
         "--username",
         default="thqm",
@@ -46,7 +42,41 @@ Custom styles should be added to {CONF_DIR}
         help="Authentication username, only used if a PASSWORD is provided.",
     )
     parser.add_argument(
+        "-pw", "--password", default=None, type=str, help="Authentication password."
+    )
+    parser.add_argument(
         "-s", "--seperator", default="\n", help="Entry seperator pattern.", type=str
+    )
+    parser.add_argument(
+        "-t", "--title", default="thqm", help="Page title.", type=str,
+    )
+    parser.add_argument(
+        "--style",
+        default="default",
+        choices=[style.name for style in get_styles()],
+        type=str,
+        help="Page style.",
+    )
+    parser.add_argument(
+        "--extra-template-args",
+        type=json.loads,
+        help="Extra template arguments, json string.",
+        default="{}",
+        metavar="JSON",
+    )
+    parser.add_argument(
+        "-q",
+        "--show-qrcode",
+        action="store_true",
+        default=False,
+        help='Show the qrcode in terminal, requires "pyqrcode".',
+    )
+    parser.add_argument(
+        "-l",
+        "--show-url",
+        action="store_true",
+        default=False,
+        help="Show the page url.",
     )
     parser.add_argument(
         "-o",
@@ -55,7 +85,6 @@ Custom styles should be added to {CONF_DIR}
         default=False,
         help="Shutdown server after first click.",
     )
-    parser.add_argument("-t", "--title", default="thqm", help="Page title.", type=str)
     parser.add_argument(
         "--no-shutdown",
         action="store_true",
@@ -68,53 +97,47 @@ Custom styles should be added to {CONF_DIR}
         default=not PYQRCODE_IMPORT,
         help="Remove qrcode button.",
     )
-    parser.add_argument(
-        "--style",
-        default="default",
-        choices=[style.name for style in get_styles()],
-        type=str,
-        help="Page style.",
-    )
     args = parser.parse_args()
-
-    # init the configuration folder
-    init_conf_folder()
 
     # get the base dir of the style.
     base_dir = style_base_dir(args.style)
 
-    # if qr code and pyqrcode not installed
+    # determine the page url (with login information)
+    page_url = get_url(args.port, args.username, args.password)
+    if args.show_url:
+        echo(page_url)
+
+    # if qrcode and pyqrcode not installed
     if not PYQRCODE_IMPORT and (args.show_qrcode or not args.no_qrcode):
         print(
-            "'pyqrcode' not installed. To install 'pip install pyqrcode'.",
+            "Can't show qrcode (-q), 'pyqrcode' not installed. To install 'pip install pyqrcode'.",
             file=sys.stderr,
         )
         sys.exit(1)
 
+    # if the qrcode is required
     if args.show_qrcode or not args.no_qrcode:
-        qr_path = base_dir / "static/qr_code.svg"
-        qr = generate_qr(
-            username=args.username,
-            password=args.password,
-            port=args.port,
-            qr_path=qr_path,
-        )
+        # qr_path = base_dir / "static/qr_code.svg"
+        qr, qrsvg = generate_qr(page_url)
         if args.show_qrcode:
             echo(qr.terminal())
     else:
-        qr_path = None
+        qrsvg = None
 
+    # render page and start the server
     try:
         start_server(
             events=[e.strip() for e in sys.stdin.read().split(args.seperator) if e],
             port=args.port,
             username=args.username,
             password=args.password,
+            qrsvg=qrsvg,
             oneshot=args.oneshot,
             base_dir=base_dir,
             qrcode_button=not args.no_qrcode,
             shutdown_button=not args.no_shutdown,
             title=args.title,
+            **args.extra_template_args,
         )
     except KeyboardInterrupt:
         sys.exit(130)
@@ -123,10 +146,6 @@ Custom styles should be added to {CONF_DIR}
     except Exception as e:
         print(e, file=sys.stderr)
         sys.exit(1)
-    finally:
-        # cleanup the qr_code.svg once done
-        if qr_path is not None and qr_path.is_file():
-            qr_path.unlink()
 
 
 if __name__ == "__main__":

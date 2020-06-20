@@ -2,8 +2,6 @@ import os
 import sys
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, PackageLoader, select_autoescape
-
 
 def get_conf_path() -> Path:
     """Platform agnostic config directory.
@@ -36,6 +34,7 @@ EXAMPLE_PURE_HTML = """\
         qrcode_button (bool): show qrcode button.
         shutdown_button (bool): show shutdown button.
         events (list): list of strings.
+        qrcode (str): qrcode svg elements.
 #}
 <!DOCTYPE html>
 <html>
@@ -50,7 +49,7 @@ EXAMPLE_PURE_HTML = """\
       <div>
         <h2>{{ title }}</h1>
         {% if qrcode_button %}
-          <a href='static/qr_code.svg'>qrcode</a>
+          {{ qrcode|safe }}
         {% endif %}
         {% if shutdown_button %}
           <a href="./?shutdown")>shutdown</a>
