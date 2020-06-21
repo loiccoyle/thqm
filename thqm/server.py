@@ -98,16 +98,15 @@ def handler_factory(
             None, in which case the caller has nothing further to do.
             """
             path = self.translate_path(self.path)
-            f = None
+            f_obj = None
             ctype = None
 
             if self.get_query(self.path) == "shutdown":
                 # shutdown server
                 self.shutdown()
-                return
             elif path == "":
                 # if main page
-                f = copy(jinja_template_rendered)
+                f_obj = copy(jinja_template_rendered)
                 ctype = "text/html"
             elif path in self.events:
                 # If event
@@ -115,25 +114,23 @@ def handler_factory(
                 if oneshot:
                     # shutdown after print
                     self.shutdown()
-                    return
-                self.send_response(302)
-                self.send_header("Location", "/")
-                self.end_headers()
-                return
+                else:
+                    self.send_response(302)
+                    self.send_header("Location", "/")
+                    self.end_headers()
             elif "static" in map(str, Path(path).parents):
                 # if anything else
                 try:
-                    f = open(base_dir / path, "rb")
+                    f_obj = open(base_dir / path, "rb")
                 except IOError:
-                    return
-            else:
-                return
-            if not ctype:
-                ctype = self.guess_type(path)
-            self.send_response(200)
-            self.send_header("Content-type", ctype)
-            self.end_headers()
-            return f
+                    pass
+            if f_obj is not None:
+                if not ctype:
+                    ctype = self.guess_type(path)
+                self.send_response(200)
+                self.send_header("Content-type", ctype)
+                self.end_headers()
+            return f_obj
 
         def translate_path(self, path: str) -> str:
             """Cleanup path.
