@@ -3,7 +3,7 @@ import socket
 from io import BytesIO
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, PackageLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .settings import CONF_DIR, EXAMPLE_PURE_HTML, PKG_DIR
 
@@ -16,6 +16,12 @@ except ImportError:
 
 
 def get_url(port: int, username: str, password: str) -> str:
+    """Construct the url string.
+    Args:
+        port: port number.
+        username: basic auth username.
+        password: basic auth password.
+    """
     if password is not None and username is not None:
         return f"http://{username}:{password}@{get_ip()}:{port}/"
     return f"http://{get_ip()}:{port}/"
@@ -31,9 +37,9 @@ def generate_qr(data: str) -> tuple:
     Returns:
         tuple of pyqrcode.qr object and qrcode svg string.
     """
-    qr = pyqrcode.create(data)
+    qrcode = pyqrcode.create(data)
     qr_buf = BytesIO()
-    qr.svg(
+    qrcode.svg(
         qr_buf,
         module_color="#000000",
         background="#ffffff",
@@ -42,7 +48,7 @@ def generate_qr(data: str) -> tuple:
         svgclass="qrcode",
         omithw=True,
     )
-    return qr, qr_buf.getvalue().decode("utf8")
+    return qrcode, qr_buf.getvalue().decode("utf8")
 
 
 def get_ip() -> str:
@@ -106,6 +112,8 @@ def create_jinja_env(folder: Path) -> Environment:
 
 
 def init_conf_folder():
+    """Initialize the config folder contents.
+    """
     folders = [
         CONF_DIR,
         CONF_DIR / "pure_html",
@@ -119,8 +127,10 @@ def init_conf_folder():
         (CONF_DIR / "pure_html/template/index.html").write_text(EXAMPLE_PURE_HTML)
 
 
-class ArgFormatter(argparse.RawTextHelpFormatter,):
+class ArgFormatter(argparse.RawTextHelpFormatter):
     def _get_help_string(self, action) -> str:
+        """Small hack to use raw printing on default values.
+        """
         help_str = action.help
         if "%(default)" not in action.help:
             if action.default is not argparse.SUPPRESS:

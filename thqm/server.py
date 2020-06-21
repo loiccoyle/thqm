@@ -56,10 +56,10 @@ def handler_factory(
             super().__init__(*args, **kwargs)
 
         def _do_GET(self):
-            f = self.send_head()
-            if f:
-                self.copyfile(f, self.wfile)
-                f.close()
+            f_obj = self.send_head()
+            if f_obj:
+                self.copyfile(f_obj, self.wfile)
+                f_obj.close()
 
         def do_GET(self):
             """Serve a GET request.
@@ -75,9 +75,9 @@ def handler_factory(
         def do_HEAD(self):
             """Serve a HEAD request.
             """
-            f = self.send_head()
-            if f:
-                f.close()
+            f_obj = self.send_head()
+            if f_obj:
+                f_obj.close()
 
         def do_HEADAUTH(self):
             """Handle the authentication in the header.
@@ -132,7 +132,8 @@ def handler_factory(
                 self.end_headers()
             return f_obj
 
-        def translate_path(self, path: str) -> str:
+        @staticmethod
+        def translate_path(path: str) -> str:
             """Cleanup path.
             """
             # abandon query parameters
@@ -141,12 +142,14 @@ def handler_factory(
             # remove first /
             return unquote(path)[1:]
 
-        def get_query(self, path: str) -> Path:
+        @staticmethod
+        def get_query(path: str) -> Path:
             """Get the first query parameter.
             """
             path = path.split("?", 1)
             if len(path) > 1:
                 return path[1]
+            return ""
 
         def shutdown(self):
             """Shutdown the server.
@@ -154,7 +157,8 @@ def handler_factory(
             killer = threading.Thread(target=self.server.shutdown)
             killer.start()
 
-        def copyfile(self, source, outputfile):
+        @staticmethod
+        def copyfile(source, outputfile):
             """Copy all data between two file objects.
 
             The SOURCE argument is a file object open for reading

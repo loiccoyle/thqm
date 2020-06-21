@@ -118,9 +118,9 @@ Custom styles should be added to {CONF_DIR}
     # if the qrcode is required
     if args.show_qrcode or not args.no_qrcode:
         # qr_path = base_dir / "static/qr_code.svg"
-        qr, qrsvg = generate_qr(page_url)
+        qrcode, qrsvg = generate_qr(page_url)
         if args.show_qrcode:
-            echo(qr.terminal())
+            echo(qrcode.terminal())
     else:
         qrsvg = None
 
@@ -143,8 +143,8 @@ Custom styles should be added to {CONF_DIR}
         sys.exit(130)
     except BrokenPipeError:
         sys.exit(0)
-    except Exception as e:
-        print(e, file=sys.stderr)
+    except Exception as exc:
+        print(exc, file=sys.stderr)
         sys.exit(1)
 
 
