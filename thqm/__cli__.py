@@ -3,6 +3,7 @@ import argparse
 import json
 import sys
 
+from . import __version__
 from .server import start_server
 from .settings import CONF_DIR
 from .utils import (
@@ -97,7 +98,14 @@ Custom styles should be added to {CONF_DIR}
         default=not PYQRCODE_IMPORT,
         help="Remove qrcode button.",
     )
+    parser.add_argument(
+        "--version", action="store_true", default=False, help="Show version and exit.",
+    )
     args = parser.parse_args()
+
+    if args.version:
+        print(__version__)
+        sys.exit(0)
 
     # get the base dir of the style.
     base_dir = style_base_dir(args.style)

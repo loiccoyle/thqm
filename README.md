@@ -78,20 +78,24 @@ Custom styles should be added to /home/lcoyle/.config/thqm
 optional arguments:
   -h, --help            show this help message and exit
   -p PORT, --port PORT  Port number. (default: 8901)
-  -q, --show-qrcode     Show the qrcode in terminal, requires "pyqrcode". (default: False)
-  -pw PASSWORD, --password PASSWORD
-                        Authentication password. (default: None)
   -u USERNAME, --username USERNAME
                         Authentication username, only used if a PASSWORD is provided. (default: 'thqm')
+  -pw PASSWORD, --password PASSWORD
+                        Authentication password. (default: None)
   -s SEPERATOR, --seperator SEPERATOR
                         Entry seperator pattern. (default: '\n')
-  -o, --oneshot         Shutdown server after first click. (default: False)
   -t TITLE, --title TITLE
                         Page title. (default: 'thqm')
-  --no-shutdown         Remove server shutdown button. (default: False)
-  --no-qrcode           Remove qrcode button. (default: False)
   --style {default,pure_html}
                         Page style. (default: 'default')
+  --extra-template-args JSON
+                        Extra template arguments, json string. (default: '{}')
+  -q, --show-qrcode     Show the qrcode in terminal, requires "pyqrcode". (default: False)
+  -l, --show-url        Show the page url. (default: False)
+  -o, --oneshot         Shutdown server after first click. (default: False)
+  --no-shutdown         Remove server shutdown button. (default: False)
+  --no-qrcode           Remove qrcode button. (default: False)
+  --version             Show version and exit. (default: False)
 ```
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
