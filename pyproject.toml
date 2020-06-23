@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "thqm"
-version = "1.2.0"
+version = "1.2.1"
 description = "remote command execution made easy."
 authors = ["Loic Coyle <loic.coyle@hotmail.fr>"]
 license = "MIT"
