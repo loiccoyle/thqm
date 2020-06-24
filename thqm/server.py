@@ -87,6 +87,13 @@ def handler_factory(
             self.send_header("Content-type", "text/html")
             self.end_headers()
 
+        def reset(self):
+            """Redirect to /.
+            """
+            self.send_response(302)
+            self.send_header("Location", "/")
+            self.end_headers()
+
         def send_head(self):
             """Common code for GET and HEAD commands.
 
@@ -115,9 +122,8 @@ def handler_factory(
                     # shutdown after print
                     self.shutdown()
                 else:
-                    self.send_response(302)
-                    self.send_header("Location", "/")
-                    self.end_headers()
+                    # reset to main page
+                    self.reset()
             elif "static" in map(str, Path(path).parents):
                 # if anything else
                 try:
