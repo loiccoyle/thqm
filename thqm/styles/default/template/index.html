@@ -1,45 +1,41 @@
-{# thqm template
+{#- thqm template
     args:
         title (str): page title.
         qrcode_button (bool): show qrcode button.
         shutdown_button (bool): show shutdown button.
         events (list): list of strings.
         qrcode (str): qrcode svg elements
-#}
+-#}
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/png" href="static/favicon.png" sizes='32x32'/>
-    <!-- <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css"> -->
-    <link rel="stylesheet" type="text/css" href="static/index.css">
-    <!-- <script src="static/js/jquery-3.5.1.slim.min.js"></script> -->
-    <!-- <script src="static/js/bootstrap.min.js"></script> -->
+    <link rel="shortcut icon" type="image/png" href="static/favicon.png" sizes='32x32' />
+    <link rel="stylesheet" type="text/css" href="static/index.css" />
     <title>{{ title }}</title>
   </head>
-
   <body>
     <header>
       <div class="navbar">
           <a href='/' tabindex='-1' class="title">{{ title }}</a>
-        {% if qrcode_button or shutdown_button %}
+        {%- if qrcode_button or shutdown_button -%}
         <div>
-        {% if qrcode_button %}
+        {%- if qrcode_button -%}
           <button class='btn' id='qrcode-btn' tabindex='-1' type='button' title='Show QR code' onclick="document.getElementById('qrcode').style.display='block'">
             <img src='static/qrcode-icon.svg' width=20 height=20>
           </button>
-        {% endif %}
-        {% if shutdown_button %}
+        {%- endif -%}
+        {%- if shutdown_button -%}
           <button class='btn' id='shutdown-btn' tabindex='-1' type='button' title='Shutdown server' onclick='fetch("?shutdown");'>
             <img src='static/power-off-icon.svg' width=20 height=20>
           </button>
-        {% endif %}
+        {%- endif -%}
         </div>
-        {% endif %}
+        {%- endif -%}
       </div>
     </header>
-    {% if qrcode_button %}
+    {%- if qrcode_button -%}
     <!-- Modal -->
     <div class="modal" id="qrcode" tabindex="-1" role="dialog" onclick="document.getElementById('qrcode').style.display='none'">
       <div class="qr-container">
@@ -47,14 +43,15 @@
       </div>
     </div>
     <!-- Modal end -->
-    {% endif %}
-    {% for e in events %}
+    {%- endif -%}
+    <!-- list of events -->
+    {%- for e in events -%}
     <div class='disable-dbl-tap-zoom'>
       <button class='btn event-content' tabindex=0 role='button' onclick="fetch('./' + '{{ e }}')">
         <pre>{{ e|safe }}</pre>
       </button>
     </div>
-    {% endfor %}
+    {%- endfor -%}
   </body>
   <script>
     // Get the event buttons

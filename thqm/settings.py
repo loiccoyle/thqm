@@ -40,27 +40,25 @@ EXAMPLE_PURE_HTML = """\
 <html>
   <head>
     <meta charset="utf-8" />
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
     <title>{{ title }}</title>
   </head>
-
   <body>
     <header>
       <div>
         <h2>{{ title }}</h1>
-        {% if qrcode_button %}
+        {%- if qrcode_button -%}
           {{ qrcode|safe }}
-        {% endif %}
-        {% if shutdown_button %}
+        {%- endif -%}
+        {%- if shutdown_button -%}
           <a href="./?shutdown")>shutdown</a>
-        {% endif %}
+        {%- endif -%}
       </div>
     </header>
     <hr/>
-    {% for e in events %}
+    {%- for e in events -%}
       <a href='./{{ e }}'>
         <pre><code>{{ e|safe }}</code></pre>
       </a>
-    {% endfor %}
+    {%- endfor -%}
   </body>
 </html>"""
