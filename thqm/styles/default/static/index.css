@@ -1,7 +1,7 @@
 body {
   font-family: monospace, monospace;
-  background: #111111;
-  color: #eeeeee
+  background-color: #111111;
+  color: #eeeeee;
 }
 
 .disable-dbl-tap-zoom {
@@ -36,7 +36,7 @@ body {
   height: 3rem;
   width: 3rem;
   border-style: solid;
-  border-color: #343434
+  border-color: #343434;
 }
 .btn:hover {
   transition: all 0.3s;
