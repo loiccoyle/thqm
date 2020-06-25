@@ -31,7 +31,7 @@
           </button>
         {% endif %}
         {% if shutdown_button %}
-          <button class='btn' id='shutdown-btn' type='button' onclick='fetch("?shutdown");' title='Shutdown server'>
+          <button class='btn' id='shutdown-btn' tabindex='-1' type='button' title='Shutdown server' onclick='fetch("?shutdown");'>
             <img src='static/power-off-icon.svg' width=20 height=20>
           </button>
         {% endif %}
