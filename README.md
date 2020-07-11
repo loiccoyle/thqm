@@ -8,7 +8,10 @@
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-informational">
 </p>
-<img src="https://i.imgur.com/OrK36nl.png?1" align='right' width='170px'>
+
+<img src="https://i.imgur.com/lYwkjzP.png" align="right" width='170px'>
+<img src="https://i.imgur.com/ezJgbhX.png" align="right" width='170px'>
+
 
 > `thqm` takes its name from the arabic تحكم, pronounced tahakum, meaning control.
 
