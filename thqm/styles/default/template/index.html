@@ -25,14 +25,14 @@
           <button class='btn' id='qrcode-btn' tabindex='-1' type='button' title='Show QR code' onclick="document.getElementById('qrcode').style.display='block'">
             <img src='static/qrcode-icon.svg' width=20 height=20>
           </button>
-        {%- endif -%}
+        {%- endif %}
         {%- if shutdown_button -%}
           <button class='btn' id='shutdown-btn' tabindex='-1' type='button' title='Shutdown server' onclick='fetch("?shutdown");'>
             <img src='static/power-off-icon.svg' width=20 height=20>
           </button>
-        {%- endif -%}
+        {%- endif %}
         </div>
-        {%- endif -%}
+        {%- endif %}
       </div>
     </header>
     {%- if qrcode_button -%}
@@ -43,15 +43,15 @@
       </div>
     </div>
     <!-- Modal end -->
-    {%- endif -%}
+    {%- endif %}
     <!-- list of events -->
-    {%- for e in events -%}
+    {%- for e in events %}
     <div class='disable-dbl-tap-zoom'>
       <button class='btn event-content' tabindex=0 role='button' onclick="fetch('./' + '{{ e }}')">
         <pre>{{ e|safe }}</pre>
       </button>
     </div>
-    {%- endfor -%}
+    {%- endfor %}
   </body>
   <script>
     // Get the event buttons
