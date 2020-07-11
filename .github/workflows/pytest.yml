@@ -41,7 +41,9 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        run: poetry install -E qrcode
+        run: |
+          pip install --upgrade pip
+          poetry install -E qrcode
 
       - name: Run pytest
         shell: bash
