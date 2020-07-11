@@ -37,6 +37,8 @@ body {
   width: 3rem;
   border-style: solid;
   border-color: #343434;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
 }
 .btn:hover {
   transition: all 0.3s;
