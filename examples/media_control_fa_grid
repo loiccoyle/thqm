@@ -1,7 +1,7 @@
 #!/bin/sh
 
 function media_control {
-    while read event; do
+    while IFS= read -r event; do
         case "$event" in
             "fas fa-volume-up")
                 pactl set-sink-volume @DEFAULT_SINK@ +10%
