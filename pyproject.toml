@@ -21,9 +21,10 @@ keywords = ["remote", "command", "HTTP-server", "thqm"]
 python = "^3.6"
 jinja2 = "^2.11.2"
 pyqrcode = { version = "^1.2.1", optional = true }
+pypng = { version = "^0.0.20", optional = true }
 
 [tool.poetry.extras]
-qrcode = ["pyqrcode"]
+qrcode = ["pyqrcode", "pypng"]
 
 [tool.poetry.scripts]
 thqm = 'thqm.__cli__:main'
