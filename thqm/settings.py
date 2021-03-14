@@ -14,6 +14,8 @@ def get_conf_path() -> Path:
         folder = os.environ.get(key)
         if folder is None:
             folder = Path.home()
+        else:
+            folder = Path(folder)
         return folder / "thqm"
     if PLATFORM == "darwin":
         return Path("~/Library/Application Support").expanduser() / "thqm"
