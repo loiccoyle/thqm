@@ -19,8 +19,7 @@ from .utils import (
 
 
 def main():
-    """thqm cli.
-    """
+    """thqm cli."""
     # init the configuration folder
     init_conf_folder()
 
@@ -49,7 +48,11 @@ Custom styles should be added to {CONF_DIR}
         "-s", "--seperator", default="\n", help="Entry seperator pattern.", type=str
     )
     parser.add_argument(
-        "-t", "--title", default="thqm", help="Page title.", type=str,
+        "-t",
+        "--title",
+        default="thqm",
+        help="Page title.",
+        type=str,
     )
     parser.add_argument(
         "--style",
@@ -71,6 +74,14 @@ Custom styles should be added to {CONF_DIR}
         action="store_true",
         default=False,
         help='Show the qrcode in terminal, requires "pyqrcode".',
+    )
+    parser.add_argument(
+        "-sq",
+        "--save-qrcode",
+        default=None,
+        type=str,
+        help='Save the qrcode png to the provided path, requires "pyqrcode".',
+        metavar="PATH"
     )
     parser.add_argument(
         "-l",
@@ -99,7 +110,10 @@ Custom styles should be added to {CONF_DIR}
         help="Remove qrcode button.",
     )
     parser.add_argument(
-        "--version", action="store_true", default=False, help="Show version and exit.",
+        "--version",
+        action="store_true",
+        default=False,
+        help="Show version and exit.",
     )
     args = parser.parse_args()
 
@@ -116,9 +130,11 @@ Custom styles should be added to {CONF_DIR}
         echo(page_url)
 
     # if qrcode and pyqrcode not installed
-    if not PYQRCODE_IMPORT and (args.show_qrcode or not args.no_qrcode):
+    if not PYQRCODE_IMPORT and (
+        args.show_qrcode or not args.no_qrcode or args.save_qrcode is not None
+    ):
         print(
-            "Can't show qrcode (-q), 'pyqrcode' not installed. To install 'pip install pyqrcode'.",
+            "Can't create qrcode, 'pyqrcode' not installed. To install 'pip install pyqrcode'.",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -129,6 +145,8 @@ Custom styles should be added to {CONF_DIR}
         qrcode, qrsvg = generate_qr(page_url)
         if args.show_qrcode:
             echo(qrcode.terminal())
+        if args.save_qrcode is not None:
+            qrcode.png(args.save_qrcode, scale=5)
     else:
         qrsvg = None
 
