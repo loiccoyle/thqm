@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function media_control {
+media_control() {
     while IFS= read -r event; do
         case "$event" in
             "Raise volume")
@@ -38,4 +38,4 @@ function media_control {
     done
 }
 
-echo -e "Raise volume\nLower volume\nMute/Unmute\nPlay/Pause\nPrevious\nNext\nScrub right\nScrub left\nSpace" | thqm --title="media control" "$@" | media_control
+printf "Raise volume\nLower volume\nMute/Unmute\nPlay/Pause\nPrevious\nNext\nScrub right\nScrub left\nSpace" | thqm --title="media control" "$@" | media_control
