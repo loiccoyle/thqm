@@ -62,8 +62,7 @@ def handler_factory(
                 f_obj.close()
 
         def do_GET(self):
-            """Serve a GET request.
-            """
+            """Serve a GET request."""
             if self.require_login:
                 if self.headers.get("Authorization") == "Basic " + self._auth:
                     self._do_GET()
@@ -73,23 +72,20 @@ def handler_factory(
                 self._do_GET()
 
         def do_HEAD(self):
-            """Serve a HEAD request.
-            """
+            """Serve a HEAD request."""
             f_obj = self.send_head()
             if f_obj:
                 f_obj.close()
 
         def do_HEADAUTH(self):
-            """Handle the authentication in the header.
-            """
+            """Handle the authentication in the header."""
             self.send_response(401)
             self.send_header("WWW-Authenticate", 'Basic realm="thqm"')
             self.send_header("Content-type", "text/html")
             self.end_headers()
 
         def reset(self):
-            """Redirect to /.
-            """
+            """Redirect to /."""
             self.send_response(302)
             self.send_header("Location", "/")
             self.end_headers()
@@ -140,8 +136,7 @@ def handler_factory(
 
         @staticmethod
         def translate_path(path: str) -> str:
-            """Cleanup path.
-            """
+            """Cleanup path."""
             # abandon query parameters
             path = path.split("?", 1)[0]
             path = path.split("#", 1)[0]
@@ -149,17 +144,15 @@ def handler_factory(
             return unquote(path)[1:]
 
         @staticmethod
-        def get_query(path: str) -> Path:
-            """Get the first query parameter.
-            """
-            path = path.split("?", 1)
-            if len(path) > 1:
-                return path[1]
+        def get_query(path: str) -> str:
+            """Get the first query parameter."""
+            paths = path.split("?", 1)
+            if len(paths) > 1:
+                return paths[1]
             return ""
 
         def shutdown(self):
-            """Shutdown the server.
-            """
+            """Shutdown the server."""
             killer = threading.Thread(target=self.server.shutdown)
             killer.start()
 
@@ -196,8 +189,7 @@ def handler_factory(
             return self.extensions_map.get(ext, self.extensions_map[""])
 
         def log_message(self, *args, **kwargs):
-            """Disable all prints.
-            """
+            """Disable all prints."""
 
     return HTTPHandler
 
@@ -236,7 +228,9 @@ def start_server(
         oneshot=oneshot,
         jinja_template_rendered=BytesIO(
             template.render(
-                events=events, qrcode=qrsvg, **jinja_template_kwargs,
+                events=events,
+                qrcode=qrsvg,
+                **jinja_template_kwargs,
             ).encode("utf8")
         ),
     )
