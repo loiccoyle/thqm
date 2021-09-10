@@ -3,7 +3,7 @@
 <h5 align="center">Remote command execution made easy.</h5>
 
 <p align="center">
-  <a href="https://github.com/loiccoyle/thqm/actions?query=workflow%3Atests"><img src="https://github.com/loiccoyle/thqm/workflows/tests/badge.svg"></a>
+  <a href="https://github.com/loiccoyle/thqm/actions?query=workflow%3Atest"><img src="https://github.com/loiccoyle/thqm/workflows/test/badge.svg"></a>
   <a href="https://pypi.org/project/thqm/"><img src="https://img.shields.io/pypi/v/thqm"></a>
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
   <img src="https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-informational">
