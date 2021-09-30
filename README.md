@@ -12,7 +12,6 @@
 <img src="https://i.imgur.com/lYwkjzP.png" align="right" width='170px'>
 <img src="https://i.imgur.com/ezJgbhX.png" align="right" width='170px'>
 
-
 > `thqm` takes its name from the arabic تحكم, pronounced tahakum, meaning control.
 
 `thqm` makes it very easy to setup a simple remote control interface on the host machine.
@@ -27,6 +26,7 @@ This makes it very flexible and script friendly. See the [examples](./examples) 
 &nbsp;
 
 # Installation
+
 ```shell
 pip install thqm
 ```
@@ -42,18 +42,23 @@ pip install 'thqm[qrcode]'
 It usually is a good idea to use a virtual environment, or maybe consider using [pipx](https://github.com/pipxproject/pipx).
 
 # Dependencies
+
 `thqm` requires the following to run:
-  * `python3`
-  * `jinja`
+
+- `python3`
+- `jinja`
 
 Optional:
-  * `pyqrcode` for qrcode generation.
+
+- `pyqrcode` for qrcode generation.
 
 # Configuration
+
 `thqm` will create a config folder:
-  * Linux: `$XDG_CONFIG_HOME/thqm` (or `$HOME/.config/thqm` if `$XDG_CONFIG_HOME` is not set)
-  * MacOS: `~/Library/Application Support/thqm`
-  * Windows: `%LOCALAPPDATA%/thqm` (or `~/thqm`)
+
+- Linux: `$XDG_CONFIG_HOME/thqm` (or `$HOME/.config/thqm` if `$XDG_CONFIG_HOME` is not set)
+- MacOS: `~/Library/Application Support/thqm`
+- Windows: `%LOCALAPPDATA%/thqm` (or `~/thqm`)
 
 This folder holds `thqm`'s custom styles. A bare bone example, `pure_html`, will be created.
 
@@ -62,21 +67,20 @@ To add your own custom style, follow the folder structure of the provided exampl
 **Note:** the base folder of the server will the style's folder. So to access files in the `static` folder from your `index.html`:
 
 ```html
-<link rel="stylesheet" type="text/css" href="static/index.css">
+<link rel="stylesheet" type="text/css" href="static/index.css" />
 ```
 
 # Usage
+
 Check the [examples](./examples) folder for some usage examples.
 
 ```
-$ thqm --help
-
-usage: thqm [-h] [-p PORT] [-q] [-pw PASSWORD] [-u USERNAME] [-s SEPERATOR] [-o] [-t TITLE]
-            [--no-shutdown] [--no-qrcode] [--style {default,pure_html}]
+usage: thqm [-h] [-p PORT] [-u USERNAME] [-pw PASSWORD] [-s SEPERATOR] [-t TITLE] [--style {default,fa-grid,pure_html}] [--extra-template-args JSON] [-q] [-sq PATH] [-l] [-o] [--no-shutdown] [--no-qrcode]
+            [--custom-event-input] [--version]
 
 Remote command execution made easy.
 
-Custom styles should be added to /home/lcoyle/.config/thqm
+Custom styles should be added to ~/.config/thqm
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -89,17 +93,21 @@ optional arguments:
                         Entry seperator pattern. (default: '\n')
   -t TITLE, --title TITLE
                         Page title. (default: 'thqm')
-  --style {default,pure_html}
+  --style {default,fa-grid,pure_html}
                         Page style. (default: 'default')
   --extra-template-args JSON
                         Extra template arguments, json string. (default: '{}')
   -q, --show-qrcode     Show the qrcode in terminal, requires "pyqrcode". (default: False)
+  -sq PATH, --save-qrcode PATH
+                        Save the qrcode png to the provided path, requires "pyqrcode". (default: None)
   -l, --show-url        Show the page url. (default: False)
   -o, --oneshot         Shutdown server after first click. (default: False)
   --no-shutdown         Remove server shutdown button. (default: False)
   --no-qrcode           Remove qrcode button. (default: False)
+  --custom-event-input  Add a text field input, implies --allow-custom-event (default: False)
   --version             Show version and exit. (default: False)
 ```
+
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
 
 With the `-s` argument you can define the pattern on which to split `stdin`.
