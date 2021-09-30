@@ -109,7 +109,7 @@ Custom styles should be added to {CONF_DIR}
         "--custom-event-input",
         action="store_true",
         default=False,
-        help="Add a text field input, implies --allow-custom-event",
+        help="Add a text field input."
     )
     parser.add_argument(
         "--version", action="store_true", default=False, help="Show version and exit.",

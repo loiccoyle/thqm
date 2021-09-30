@@ -104,7 +104,7 @@ optional arguments:
   -o, --oneshot         Shutdown server after first click. (default: False)
   --no-shutdown         Remove server shutdown button. (default: False)
   --no-qrcode           Remove qrcode button. (default: False)
-  --custom-event-input  Add a text field input, implies --allow-custom-event (default: False)
+  --custom-event-input  Add a text field input. (default: False)
   --version             Show version and exit. (default: False)
 ```
 
