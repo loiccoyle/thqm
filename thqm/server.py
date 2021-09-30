@@ -5,7 +5,7 @@ from copy import copy
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import parse_qs, unquote, urlparse
 
 from .settings import PKG_DIR
 from .utils import create_jinja_env, echo
@@ -18,8 +18,12 @@ def handler_factory(
     username: str = "thqm",
     password: str = None,
     oneshot: bool = False,
+    allow_custom_events: bool = False,
 ):
     """Create a HTTPHandler class with the desired properties.
+    
+    Events should appear following the url paremeter 'event', controlling the 
+    server is done through the 'command' url parameter.
 
     Args:
         jinja_template_rendered: BytesIO object of the rendered template.
@@ -28,6 +32,8 @@ def handler_factory(
         username: basic auth username.
         password: basic auth password.
         oneshot: stop server after first click.
+        allow_custom_events: the server will echo the event regardless of it 
+            being in the events list.
 
     Returns:
         HTTPHandler class.
@@ -100,30 +106,34 @@ def handler_factory(
             and must be closed by the caller under all circumstances), or
             None, in which case the caller has nothing further to do.
             """
-            path = self.translate_path(self.path)
+            parsed_path = urlparse(self.path)
+            if parsed_path.query:
+                query = parse_qs(parsed_path.query)
+                if "event" in query:
+                    event = query["event"][0]
+                    if allow_custom_events or event in self.events:
+                        echo(event)
+                        if oneshot:
+                            self.shutdown()
+                        else:
+                            self.reset()
+                if "command" in query:
+                    command = query["command"][0]
+                    if command == "shutdown":
+                        self.shutdown()
+
+            path = unquote(parsed_path.path)
+
             f_obj = None
             ctype = None
 
-            if self.get_query(self.path) == "shutdown":
-                # shutdown server
-                self.shutdown()
-            elif path == "":
+            if path == "/":
                 # if main page
                 f_obj = copy(jinja_template_rendered)
                 ctype = "text/html"
-            elif path in self.events:
-                # If event
-                echo(path)
-                if oneshot:
-                    # shutdown after print
-                    self.shutdown()
-                else:
-                    # reset to main page
-                    self.reset()
-            elif "static" in map(str, Path(path).parents):
-                # if anything else
+            else:
                 try:
-                    f_obj = open(base_dir / path, "rb")
+                    f_obj = open(base_dir / path[1:], "rb")
                 except IOError:
                     pass
             if f_obj is not None:
@@ -202,6 +212,7 @@ def start_server(
     qrsvg: str = None,
     oneshot: bool = False,
     base_dir: Path = PKG_DIR / "styles/default",
+    allow_custom_events: bool = False,
     **jinja_template_kwargs,
 ):
     """Renders the template and starts the server.
@@ -214,6 +225,8 @@ def start_server(
         qrsvg: qrcode svg elements.
         oneshot: stop server after first click.
         base_dir: server base directory, must have a templates/index.html file.
+        allow_custom_events: the server will echo the event regardless of it being 
+            in the events list.
         **jinja_template_kwargs: template args.
     """
 
@@ -226,11 +239,10 @@ def start_server(
         username=username,
         password=password,
         oneshot=oneshot,
+        allow_custom_events=allow_custom_events,
         jinja_template_rendered=BytesIO(
             template.render(
-                events=events,
-                qrcode=qrsvg,
-                **jinja_template_kwargs,
+                events=events, qrcode=qrsvg, **jinja_template_kwargs,
             ).encode("utf8")
         ),
     )

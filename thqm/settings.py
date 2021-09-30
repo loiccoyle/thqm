@@ -37,6 +37,7 @@ EXAMPLE_PURE_HTML = """\
         shutdown_button (bool): show shutdown button.
         events (list): list of strings.
         qrcode (str): qrcode svg elements.
+        custom_event_input (bool): add a custom input text input field.
 #}
 <!DOCTYPE html>
 <html>
@@ -53,6 +54,12 @@ EXAMPLE_PURE_HTML = """\
         {%- endif -%}
         {%- if shutdown_button -%}
           <a href="./?shutdown")>shutdown</a>
+        {%- endif -%}
+        {%- if custom_event_input -%}
+          <form>
+            <input type="text" id="custom-input" name="event" placeholder="Custom input"/>
+            <input type="submit" value="Submit"/>
+          </form>
         {%- endif -%}
       </div>
     </header>

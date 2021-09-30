@@ -48,11 +48,7 @@ Custom styles should be added to {CONF_DIR}
         "-s", "--seperator", default="\n", help="Entry seperator pattern.", type=str
     )
     parser.add_argument(
-        "-t",
-        "--title",
-        default="thqm",
-        help="Page title.",
-        type=str,
+        "-t", "--title", default="thqm", help="Page title.", type=str,
     )
     parser.add_argument(
         "--style",
@@ -81,7 +77,7 @@ Custom styles should be added to {CONF_DIR}
         default=None,
         type=str,
         help='Save the qrcode png to the provided path, requires "pyqrcode".',
-        metavar="PATH"
+        metavar="PATH",
     )
     parser.add_argument(
         "-l",
@@ -110,10 +106,13 @@ Custom styles should be added to {CONF_DIR}
         help="Remove qrcode button.",
     )
     parser.add_argument(
-        "--version",
+        "--custom-event-input",
         action="store_true",
         default=False,
-        help="Show version and exit.",
+        help="Add a text field input, implies --allow-custom-event",
+    )
+    parser.add_argument(
+        "--version", action="store_true", default=False, help="Show version and exit.",
     )
     args = parser.parse_args()
 
@@ -160,9 +159,11 @@ Custom styles should be added to {CONF_DIR}
             qrsvg=qrsvg,
             oneshot=args.oneshot,
             base_dir=base_dir,
+            allow_custom_events=args.custom_event_input,
             qrcode_button=not args.no_qrcode,
             shutdown_button=not args.no_shutdown,
             title=args.title,
+            custom_event_input=args.custom_event_input,
             **args.extra_template_args,
         )
     except KeyboardInterrupt:

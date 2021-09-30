@@ -4,7 +4,8 @@
         qrcode_button (bool): show qrcode button.
         shutdown_button (bool): show shutdown button.
         events (list): list of strings.
-        qrcode (str): qrcode svg elements
+        qrcode (str): qrcode svg elements.
+        custom_event_input (bool): add a custom input text input field.
 -#}
 <!DOCTYPE html>
 <html>
@@ -27,13 +28,21 @@
           </button>
         {%- endif %}
         {%- if shutdown_button -%}
-          <button class='btn' id='shutdown-btn' tabindex='-1' type='button' title='Shutdown server' onclick='fetch("?shutdown");'>
+          <button class='btn' id='shutdown-btn' tabindex='-1' type='button' title='Shutdown server' onclick='fetch("?command=shutdown");'>
             <img src='static/power-off-icon.svg' width=20 height=20>
           </button>
         {%- endif %}
         </div>
         {%- endif %}
       </div>
+      {%- if custom_event_input -%}
+      <div class="custom-input">
+        <form class="custom-input-form">
+          <input class="custom-input-input" type="text" id="custom-input" name="event" placeholder="Custom input"/>
+          <input type="submit" value="Submit"/>
+        </form>
+      </div>
+      {%- endif -%}
     </header>
     {%- if qrcode_button -%}
     <!-- Modal -->
@@ -47,7 +56,7 @@
     <!-- list of events -->
     {%- for e in events %}
     <div class='disable-dbl-tap-zoom'>
-      <button class='btn event-content' tabindex=0 role='button' onclick="fetch('./' + '{{ e }}')">
+      <button class='btn event-content' tabindex=0 role='button' onclick="fetch('./?event=' + '{{ e }}')">
         <pre>{{ e|safe }}</pre>
       </button>
     </div>
