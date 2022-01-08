@@ -19,13 +19,11 @@ def make_testable(Handler):
             self.rfile.close()
 
         def date_time_string(self, timestamp=None):
-            """Mocked date time string.
-            """
+            """Mocked date time string."""
             return "DATETIME"
 
         def version_string(self):
-            """Mock the server id.
-            """
+            """Mock the server id."""
             return "BaseHTTP/x.x Python/x.x.x"
 
     return TestableHandler
