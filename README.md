@@ -75,14 +75,15 @@ To add your own custom style, follow the folder structure of the provided exampl
 Check the [examples](./examples) folder for some usage examples.
 
 ```
-usage: thqm [-h] [-p PORT] [-u USERNAME] [-pw PASSWORD] [-s SEPERATOR] [-t TITLE] [--style {default,fa-grid,pure_html}] [--extra-template-args JSON] [-q] [-sq PATH] [-l] [-o] [--no-shutdown] [--no-qrcode]
-            [--custom-event-input] [--version]
+usage: thqm [-h] [-p PORT] [-u USERNAME] [-pw PASSWORD] [-s SEPERATOR] [-t TITLE] [--interface INTERFACE]
+            [--style {fa-grid,default,pure_html}] [--extra-template-args JSON] [-q] [-sq PATH] [-l] [-o] [--no-shutdown]
+            [--no-qrcode] [--custom-event-input] [--version]
 
 Remote command execution made easy.
 
-Custom styles should be added to ~/.config/thqm
+Custom styles should be added to /home/lcoyle/.config/thqm
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -p PORT, --port PORT  Port number. (default: 8901)
   -u USERNAME, --username USERNAME
@@ -93,7 +94,9 @@ optional arguments:
                         Entry seperator pattern. (default: '\n')
   -t TITLE, --title TITLE
                         Page title. (default: 'thqm')
-  --style {default,fa-grid,pure_html}
+  --interface INTERFACE
+                        Network interface to use to find the local ip. If not provided, will try to infer the appropriate network interface. (default: None)
+  --style {fa-grid,default,pure_html}
                         Page style. (default: 'default')
   --extra-template-args JSON
                         Extra template arguments, json string. (default: '{}')
@@ -106,6 +109,7 @@ optional arguments:
   --no-qrcode           Remove qrcode button. (default: False)
   --custom-event-input  Add a text field input. (default: False)
   --version             Show version and exit. (default: False)
+
 ```
 
 Use the `-u` and `-pw` arguments to set a username and password to restrict access. The authentication is handled with [HTTP basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication).
