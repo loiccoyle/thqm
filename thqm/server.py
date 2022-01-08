@@ -21,8 +21,8 @@ def handler_factory(
     allow_custom_events: bool = False,
 ):
     """Create a HTTPHandler class with the desired properties.
-    
-    Events should appear following the url paremeter 'event', controlling the 
+
+    Events should appear following the url paremeter 'event', controlling the
     server is done through the 'command' url parameter.
 
     Args:
@@ -32,7 +32,7 @@ def handler_factory(
         username: basic auth username.
         password: basic auth password.
         oneshot: stop server after first click.
-        allow_custom_events: the server will echo the event regardless of it 
+        allow_custom_events: the server will echo the event regardless of it
             being in the events list.
 
     Returns:
@@ -225,7 +225,7 @@ def start_server(
         qrsvg: qrcode svg elements.
         oneshot: stop server after first click.
         base_dir: server base directory, must have a templates/index.html file.
-        allow_custom_events: the server will echo the event regardless of it being 
+        allow_custom_events: the server will echo the event regardless of it being
             in the events list.
         **jinja_template_kwargs: template args.
     """
@@ -242,7 +242,9 @@ def start_server(
         allow_custom_events=allow_custom_events,
         jinja_template_rendered=BytesIO(
             template.render(
-                events=events, qrcode=qrsvg, **jinja_template_kwargs,
+                events=events,
+                qrcode=qrsvg,
+                **jinja_template_kwargs,
             ).encode("utf8")
         ),
     )

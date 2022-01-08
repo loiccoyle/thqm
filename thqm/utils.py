@@ -1,8 +1,9 @@
 import argparse
-import socket
 from io import BytesIO
 from pathlib import Path
+from typing import Optional
 
+import netifaces
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .settings import CONF_DIR, EXAMPLE_PURE_HTML, PKG_DIR
@@ -15,16 +16,24 @@ except ImportError:
     PYQRCODE_IMPORT = False
 
 
-def get_url(port: int, username: str, password: str) -> str:
+def get_url(
+    port: int,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    interface: Optional[str] = None,
+) -> str:
     """Construct the url string.
+
     Args:
         port: port number.
         username: basic auth username.
         password: basic auth password.
+        interface: network interface to use to find the local ip.
     """
+    ip = get_ip(interface)
     if password is not None and username is not None:
-        return f"http://{username}:{password}@{get_ip()}:{port}/"
-    return f"http://{get_ip()}:{port}/"
+        return f"http://{username}:{password}@{ip}:{port}/"
+    return f"http://{ip}:{port}/"
 
 
 def generate_qr(data: str) -> tuple:
@@ -51,22 +60,26 @@ def generate_qr(data: str) -> tuple:
     return qrcode, qr_buf.getvalue().decode("utf8")
 
 
-def get_ip() -> str:
-    """Gets host local ip.
+def get_ip(interface: Optional[str] = None) -> str:
+    """Gets host local network ip.
+
+    Args:
+        interface: network interface to use to find the local ip.
 
     Returns:
-        LAN ip.
+        Local network ip.
     """
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.connect(("8.8.8.8", 80))  # checks if device is connected to internet
-    ip_addr = sock.getsockname()[0]
-    sock.close()
-    return ip_addr
+    if interface is None:
+        gateways = netifaces.gateways()[netifaces.AF_INET]
+        # skip over tun interfaces, usually for vpns
+        interface = [iface for _, iface, _ in gateways if not "tun" in iface][0]
+
+    ips = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]
+    return ips["addr"]
 
 
 def echo(msg: str):
-    """Print and flush.
-    """
+    """Print and flush."""
     print(msg, flush=True)
 
 
@@ -80,8 +93,7 @@ def check_base_dir(folder: Path) -> bool:
 
 
 def get_styles() -> list:
-    """Get the available styles.
-    """
+    """Get the available styles."""
     return [
         style
         for style in list((PKG_DIR / "styles").glob("*")) + list(CONF_DIR.glob("*"))
@@ -90,8 +102,7 @@ def get_styles() -> list:
 
 
 def style_base_dir(style: str) -> Path:
-    """Get style path from name.
-    """
+    """Get style path from name."""
     styles = {style_path.name: style_path for style_path in get_styles()}
     return styles[style]
 
@@ -112,8 +123,7 @@ def create_jinja_env(folder: Path) -> Environment:
 
 
 def init_conf_folder():
-    """Initialize the config folder contents.
-    """
+    """Initialize the config folder contents."""
     folders = [
         CONF_DIR,
         CONF_DIR / "pure_html",
@@ -129,8 +139,7 @@ def init_conf_folder():
 
 class ArgFormatter(argparse.RawTextHelpFormatter):
     def _get_help_string(self, action) -> str:
-        """Small hack to use raw printing on default values.
-        """
+        """Small hack to use raw printing on default values."""
         help_str = action.help
         if "%(default)" not in action.help:
             if action.default is not argparse.SUPPRESS:

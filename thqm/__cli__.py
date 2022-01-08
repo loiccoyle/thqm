@@ -33,7 +33,13 @@ Remote command execution made easy.
 Custom styles should be added to {CONF_DIR}
 """,
     )
-    parser.add_argument("-p", "--port", type=int, default=8901, help="Port number.")
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        default=8901,
+        help="Port number.",
+    )
     parser.add_argument(
         "-u",
         "--username",
@@ -42,13 +48,31 @@ Custom styles should be added to {CONF_DIR}
         help="Authentication username, only used if a PASSWORD is provided.",
     )
     parser.add_argument(
-        "-pw", "--password", default=None, type=str, help="Authentication password."
+        "-pw",
+        "--password",
+        default=None,
+        type=str,
+        help="Authentication password.",
     )
     parser.add_argument(
-        "-s", "--seperator", default="\n", help="Entry seperator pattern.", type=str
+        "-s",
+        "--seperator",
+        default="\n",
+        help="Entry seperator pattern.",
+        type=str,
     )
     parser.add_argument(
-        "-t", "--title", default="thqm", help="Page title.", type=str,
+        "-t",
+        "--title",
+        default="thqm",
+        help="Page title.",
+        type=str,
+    )
+    parser.add_argument(
+        "--interface",
+        default=None,
+        help="Network interface to use to find the local ip. If not provided, will try to infer the appropriate network interface.",
+        type=str,
     )
     parser.add_argument(
         "--style",
@@ -109,10 +133,13 @@ Custom styles should be added to {CONF_DIR}
         "--custom-event-input",
         action="store_true",
         default=False,
-        help="Add a text field input."
+        help="Add a text field input.",
     )
     parser.add_argument(
-        "--version", action="store_true", default=False, help="Show version and exit.",
+        "--version",
+        action="store_true",
+        default=False,
+        help="Show version and exit.",
     )
     args = parser.parse_args()
 
@@ -124,7 +151,12 @@ Custom styles should be added to {CONF_DIR}
     base_dir = style_base_dir(args.style)
 
     # determine the page url (with login information)
-    page_url = get_url(args.port, args.username, args.password)
+    page_url = get_url(
+        args.port,
+        username=args.username,
+        password=args.password,
+        interface=args.interface,
+    )
     if args.show_url:
         echo(page_url)
 
