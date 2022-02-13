@@ -12,6 +12,8 @@
 <img src="https://i.imgur.com/lYwkjzP.png" align="right" width='170px'>
 <img src="https://i.imgur.com/ezJgbhX.png" align="right" width='170px'>
 
+**This project is archived, see https://github.com/loiccoyle/thqm.rs**
+
 > `thqm` takes its name from the arabic تحكم, pronounced tahakum, meaning control.
 
 `thqm` makes it very easy to setup a simple remote control interface on the host machine.
